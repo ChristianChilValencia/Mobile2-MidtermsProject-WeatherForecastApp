@@ -1,20 +1,62 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      WeatherForecastApp
-    </ion-title>
+    
+    <ion-title>WeatherForecastApp</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-input placeholder="Enter city name"></ion-input>
+      <ion-button>
+        <ion-icon slot="icon-only" name="search"></ion-icon>
+      </ion-button>
+      Search
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="locate"></ion-icon>
+      </ion-button>
+      Current Location
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
   <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+
+
+    <div id="left-container">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Get Started</ion-card-subtitle>
+          <ion-card-title>Welcome to WeatherForecastApp</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>This is the content of the left container.</p>
+          <!-- sub card inside it -->
+          <ion-card>
+            <ion-card-header>
+              <ion-card-subtitle>Get Started</ion-card-subtitle>
+              <ion-card-title>Welcome to WeatherForecastApp</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <p>This is the content of the left container.</p>
+            </ion-card-content>
+          </ion-card>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <div id="right-container">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>Weather Details</ion-card-subtitle>
+          <ion-card-title>Current Weather</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>This is the content of the right container.</p>
+        </ion-card-content>
+      </ion-card>
+    </div>
   </div>
 </ion-content>
