@@ -21,50 +21,169 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div id="container">
+<ion-content class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Now</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <h1>31.04°C</h1>
+      <p>haze</p>
+      <p>Thursday, 31, Aug 2023</p>
+      <p>Cebu City, Central Visayas, Philippines</p>
+    </ion-card-content>
+  </ion-card>
 
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Today's Highlights</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Air Quality Index</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>Very Poor</p>
+                <p>PM2.5: 131.55</p>
+                <p>PM10: 142.75</p>
+                <p>SO2: 7.63</p>
+                <p>CO: 1068.12</p>
+                <p>NO: 1.63</p>
+                <p>NO2: 28.79</p>
+                <p>NH3: 7.16</p>
+                <p>O3: 36.12</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Sunrise & Sunset</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>Sunrise: 05:39 AM</p>
+                <p>Sunset: 06:18 PM</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="4">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Humidity</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>70%</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="4">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Pressure</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>1007hPa</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="4">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Visibility</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>3.5km</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Wind Speed</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>2.06m/s</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Feels Like</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <p>37.71°C</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
 
-    <div id="left-container">
-        <ion-card-header>
-          <ion-card-subtitle>Current Details</ion-card-subtitle>
-          <!-- <ion-card-title>Welcome to WeatherForecastApp</ion-card-title> -->
-        </ion-card-header>
-        <ion-card-content>
-          <!-- sub card inside it -->
-          <ion-card>
-            <ion-card-header>
-              <!-- <ion-card-subtitle></ion-card-subtitle> -->
-              <ion-card-title><b>Now</b></ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <p>The weather for today is...</p>              
-            </ion-card-content>
-          </ion-card>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>5 days Forecast</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <ion-card>
+              <ion-card-content>
+                <p>28.67°C</p>
+                <p>1 Sep</p>
+                <p>Friday</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col>
+            <ion-card>
+              <ion-card-content>
+                <p>28.10°C</p>
+                <p>2 Sep</p>
+                <p>Saturday</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col>
+            <ion-card>
+              <ion-card-content>
+                <p>27.63°C</p>
+                <p>3 Sep</p>
+                <p>Sunday</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col>
+            <ion-card>
+              <ion-card-content>
+                <p>26.62°C</p>
+                <p>4 Sep</p>
+                <p>Monday</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col>
+            <ion-card>
+              <ion-card-content>
+                <p>27.02°C</p>
+                <p>5 Sep</p>
+                <p>Tuesday</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
 
-          <ion-card>
-            <ion-card-header>
-              <ion-card-subtitle></ion-card-subtitle>
-              <ion-card-title><b>5 Day Forecast</b></ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <p>Upcoming weather will be...</p>
-            </ion-card-content>
-          </ion-card>
-
-        </ion-card-content>
-    </div>
-
-    <div id="right-container">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-subtitle>Weather Details</ion-card-subtitle>
-          <ion-card-title>Current Weather</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p>This is the content of the right container.</p>
-        </ion-card-content>
-      </ion-card>
-    </div>
-  </div>
 </ion-content>
