@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     
-    <ion-title>WeatherForecastApp</ion-title>
+    <ion-title>🌥️ WeatherForecastApp</ion-title>
 
     <ion-buttons slot="end">
       <ion-input placeholder="Enter city name"></ion-input>
@@ -13,16 +13,40 @@
 
     <ion-buttons slot="end">
       <ion-button>
-        <ion-icon slot="icon-only" name="locate"></ion-icon>
+        <ion-icon slot="icon-only" name="locate" onclick="loadWeather()"></ion-icon>
       </ion-button>
       Current Location
     </ion-buttons>
+
+
 
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-card>
+  <div class="weather-card-left">
+    <div class="weather-card-1">  
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Now</ion-card-title>
+        </ion-card-header>
+        <img src="https://openweathermap.org/img/wn/04d@2x.png" alt="weather" class="weather-icon">    
+      </ion-card>
+    </div>
+    
+    <div class="weather-card-5dayforecast">  
+      <div class="weather-card-1">  
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Now</ion-card-title>
+        </ion-card-header>
+        <img src="https://openweathermap.org/img/wn/02d.png" alt="weather" class="weather-icon">    
+      </ion-card>
+      </div>
+    </div>
+  </div>
+  
+  <!-- <ion-card>
     <ion-card-header>
       <ion-card-title>Now</ion-card-title>
     </ion-card-header>
@@ -184,6 +208,7 @@
         </ion-row>
       </ion-grid>
     </ion-card-content>
-  </ion-card>
+  </ion-card> -->
 
+  
 </ion-content>
