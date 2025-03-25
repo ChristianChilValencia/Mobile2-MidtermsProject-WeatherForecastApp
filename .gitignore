@@ -70,3 +70,7 @@ testem.log
 Thumbs.db
 
 src/environments/environment.ts
+[environment.ts](http://_vscodecontentref_/2)
+
+# Secret
+.environment.ts
