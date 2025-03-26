@@ -15,19 +15,19 @@ export class HomePage {
 
   todayDate = new Date();
   weatherTemp: any;
-  // constructor(public httpClient:HttpClient) {
-  //   this.loadData();
-  // }
-  // loadData() {
-  //   this.httpClient.get(`${API_URL}/weather?q=Cebu&appid=${API_KEY}`).subscribe({
-  //     next: (results) => {
-  //       console.log(results);
-  //       this.weatherTemp = results;
-  //       console.log(this.weatherTemp);
-  //     },
-  //     error: (err) => {
-  //       console.error('Error fetching weather data:', err);
-  //     }
-  //   });
-  // }
+  constructor(public httpClient:HttpClient) {
+    this.loadData();
+  }
+  loadData() {
+    this.httpClient.get(`${API_URL}/weather?q=${"Cebu"}&appid=${API_KEY}`).subscribe({
+      next: (results) => {
+        console.log(results);
+        this.weatherTemp = results;
+        console.log(this.weatherTemp);
+      },
+      error: (err) => {
+        console.error('Error fetching weather data:', err);
+      }
+    });
+  }
 }

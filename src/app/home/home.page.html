@@ -48,6 +48,10 @@
           <ion-card-header>
             <ion-card-title>Today is {{todayDate | date: "EEE dd MMM"}}</ion-card-title>
           </ion-card-header>
+          <ion-title>{{ weatherTemp?.weather[0].description }}</ion-title>
+          <ion-title>{{ weatherTemp?.weather[0].description }}</ion-title>
+          <span>{{ (weatherTemp?.main.temp - 273.15).toFixed(0) }}</span>
+            <span>&deg;C</span>
         </ion-card>
       </ion-col>
     </ion-row>
