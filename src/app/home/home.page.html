@@ -28,6 +28,43 @@
     <ion-row>
       <!-- Weather-1 Cards on the Left -->
       <ion-col size="4">
+        <ion-col size="1">
+          <ion-card>
+            <ion-card-header style="text-align: center;">
+              <ion-card-title>{{ weatherTemp?.main.temp }}</ion-card-title>
+              <ion-card-subtitle>Temperature: </ion-card-subtitle>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="1">
+          <ion-card>
+            <ion-card-header style="text-align: center;">
+              <ion-card-title>{{ weatherTemp?.main.humidity }}</ion-card-title>
+              <ion-card-subtitle>Humidity: </ion-card-subtitle>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+
+        <ion-col size="1">
+          <ion-card>
+            <ion-card-header style="text-align: center;">
+              <ion-card-title>{{ weatherTemp?.wind.speed }}</ion-card-title>
+              <ion-card-subtitle>Speed: </ion-card-subtitle>
+            </ion-card-header>
+          </ion-card>
+        </ion-col>
+      </ion-col>
+
+      <!-- Weather-2 Card in the Center and Right -->
+      <ion-col size="8">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Today is {{ todayDate | date: "EEE dd MMM" }}</ion-card-title>
+          </ion-card-header>
+          <ion-title>{{ weatherTemp?.name }} is {{ (weatherTemp?.main.temp - 273.15).toFixed(0) }}<span>&deg;C</span> Today</ion-title><br>
+        </ion-card>
+
         <ion-card>
           <ion-card-header>
             <ion-card-title>Now</ion-card-title>
@@ -40,17 +77,9 @@
           </ion-card-header>
           <img src="https://openweathermap.org/img/wn/02d.png" alt="weather" class="weather-icon">    
         </ion-card>
+        
       </ion-col>
 
-      <!-- Weather-2 Card in the Center and Right -->
-      <ion-col size="8">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Today is {{ todayDate | date: "EEE dd MMM" }}</ion-card-title>
-          </ion-card-header>
-          <ion-title>{{ weatherTemp?.name }} is {{ (weatherTemp?.main.temp - 273.15).toFixed(0) }} <span>&deg;C</span> Today</ion-title><br>
-        </ion-card>
-      </ion-col>
 
     </ion-row>
   </ion-grid>

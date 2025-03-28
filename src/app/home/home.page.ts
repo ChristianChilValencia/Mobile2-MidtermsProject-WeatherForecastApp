@@ -29,5 +29,7 @@ export class HomePage {
         console.error('Error fetching weather data:', err);
       }
     });
+
+    
   }
 }
