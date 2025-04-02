@@ -15,28 +15,34 @@ export class SettingsService {
 
   constructor() {}
 
-  getTemperatureUnit() {
-    return this.temperatureUnit;
+  doSomething(){
+    console.log("Doing Something...");
   }
+  
+  // getTemperatureUnit() {
+  //   return this.temperatureUnit;
+  // }
 
-  setTemperatureUnit(unit: 'Celsius' | 'Fahrenheit') {
-    this.temperatureUnit = unit;
-  }
+  // setTemperatureUnit(unit: 'Celsius' | 'Fahrenheit') {
+  //   this.temperatureUnit = unit;
+  // }
 
-  areNotificationsEnabled() {
-    return this.notificationsEnabled;
-  }
 
-  setNotificationsEnabled(enabled: boolean) {
-    this.notificationsEnabled = enabled;
-  }
 
-  getTheme() {
-    return this.theme;
-  }
+  // areNotificationsEnabled() {
+  //   return this.notificationsEnabled;
+  // }
 
-  setTheme(theme: 'light' | 'dark') {
-    this.theme = theme;
-  }
+  // setNotificationsEnabled(enabled: boolean) {
+  //   this.notificationsEnabled = enabled;
+  // }
+
+  // getTheme() {
+  //   return this.theme;
+  // }
+
+  // setTheme(theme: 'light' | 'dark') {
+  //   this.theme = theme;
+  // }
   
 }

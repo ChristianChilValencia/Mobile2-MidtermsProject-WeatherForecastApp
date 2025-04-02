@@ -4,9 +4,10 @@
     <ion-title>🌥️ WeatherForecastApp</ion-title>
 
     <ion-buttons slot="end">
-      <ion-input placeholder="Enter city name"></ion-input>
+      <!-- <ion-input placeholder="Enter city name" [(ngModel)] (input)="citySearch()"></ion-input> -->
       <ion-button>
         <ion-icon slot="icon-only" name="search"></ion-icon>
+
       </ion-button>
       Search
     </ion-buttons>
@@ -18,10 +19,13 @@
       Current Location
     </ion-buttons>
 
-
-
   </ion-toolbar>
 </ion-header>
+
+
+<!-- <ion-toggle slot="end" (ionChange)="toggleDarkMode()"></ion-toggle> -->
+
+  <ion-button slot="end" (click)="doSomething()">Something</ion-button>
 
 <ion-content class="ion-padding">
   <ion-grid>
@@ -30,7 +34,7 @@
       <ion-col size="4">
         <ion-col size="1">
           <ion-card>
-            <ion-card-header style="text-align: center;">
+            <ion-card-header>
               <ion-card-title>{{ weatherTemp?.main.temp }}</ion-card-title>
               <ion-card-subtitle>Temperature: </ion-card-subtitle>
             </ion-card-header>
@@ -39,7 +43,7 @@
 
         <ion-col size="1">
           <ion-card>
-            <ion-card-header style="text-align: center;">
+            <ion-card-header>
               <ion-card-title>{{ weatherTemp?.main.humidity }}</ion-card-title>
               <ion-card-subtitle>Humidity: </ion-card-subtitle>
             </ion-card-header>
