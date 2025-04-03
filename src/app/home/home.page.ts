@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http'
+import { HttpClient } from '@angular/common/http';
+
 const API_KEY = environment.API_KEY;
 const API_URL = environment.API_URL;
 
@@ -13,21 +14,25 @@ const API_URL = environment.API_URL;
 export class HomePage {
   todayDate = new Date();
   weatherTemp: any;
-  constructor(public httpClient:HttpClient) {
+  weatherIcon: any;
+  weatherDetails: any;
+
+  constructor(public httpClient: HttpClient) {
     this.loadData();
   }
+
   loadData() {
     this.httpClient.get(`${API_URL}/weather?q=${"Cebu"}&appid=${API_KEY}`).subscribe({
       next: (results) => {
         console.log(results);
         this.weatherTemp = results;
+        this.weatherDetails = results;
+        this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.weather[0].icon}@2x.png`;
         console.log(this.weatherTemp);
       },
       error: (err) => {
         console.error('Error fetching weather data:', err);
       }
     });
-
-    
   }
 }
