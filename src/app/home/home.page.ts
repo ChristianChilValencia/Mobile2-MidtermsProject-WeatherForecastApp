@@ -12,27 +12,35 @@ const API_URL = environment.API_URL;
   standalone: false,
 })
 export class HomePage {
-  todayDate = new Date();
   weatherTemp: any;
+  todayDate = new Date();
   weatherIcon: any;
   weatherDetails: any;
+  cityName: string = 'Cebu'; 
 
-  constructor(public httpClient: HttpClient) {
-    this.loadData();
-  }
+  constructor(public httpClient: HttpClient) {}
 
   loadData() {
-    this.httpClient.get(`${API_URL}/weather?q=${"Cebu"}&appid=${API_KEY}`).subscribe({
-      next: (results) => {
+    if (!this.cityName) {
+      console.error('City name is empty!');
+      return;
+    }
+
+    this.httpClient.get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}`).subscribe({
+      next: (results: any) => {
         console.log(results);
+
         this.weatherTemp = results;
-        this.weatherDetails = results;
-        this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.weather[0].icon}@2x.png`;
-        console.log(this.weatherTemp);
+
+        this.weatherDetails = results.weather[0];
+
+        this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@2x.png`;
+
+        console.log('Weather Icon URL:', this.weatherIcon);
       },
       error: (err) => {
         console.error('Error fetching weather data:', err);
-      }
+      },
     });
   }
 }

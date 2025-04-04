@@ -2,67 +2,61 @@
   <ion-toolbar>
     <ion-title>🌥️ WeatherForecastApp</ion-title>
 
-    <ion-input name="city" id="citynput" placeholder="Enter city name"></ion-input>
-    <ion-icon slot="icon-only" name="search"></ion-icon>      
-
-    <ion-buttons expand="full" slot="end">
-      Search
-    </ion-buttons>
-
     <ion-buttons slot="end">
-      <ion-button expand="full" onclick="loadWeather()">
-        <ion-icon slot="start" name="locate"></ion-icon>
-        Current Location
+      <ion-button expand="block" (click)="loadData()" class="responsive-button">
+      <ion-icon slot="start" name="location-outline"></ion-icon>
+      Get Current Weather
       </ion-button>
     </ion-buttons>
-
-
-
   </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-searchbar animated [(ngModel)]="cityName" placeholder="Enter city name" (ionInput)="loadData()"></ion-searchbar>
+  </ion-toolbar>
+
 </ion-header>
+
 <ion-content class="ion-padding">
   <ion-grid>
     <ion-row>
       <ion-col size="4">
-        <ion-col size="1">
-          <ion-card>
-            <ion-card-header style="text-align: center;">
-              <ion-card-title>{{ weatherTemp?.main.temp }}</ion-card-title>
-              <ion-card-subtitle>Temperature: </ion-card-subtitle>
-            </ion-card-header>
-          </ion-card>
-          
-          <ion-card>
-            <ion-card-header style="text-align: center;">
-              <ion-card-title>{{ weatherTemp?.main.humidity }}</ion-card-title>
-              <ion-card-subtitle>Humidity: </ion-card-subtitle>
-            </ion-card-header>
-          </ion-card>
+        <ion-card>
+          <ion-card-header style="text-align: center;">
+            <ion-card-title>{{ weatherTemp?.main?.temp || 'N/A' }}</ion-card-title>
+            <ion-card-subtitle>Temperature: </ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
 
-          <ion-card>
-            <ion-card-header style="text-align: center;">
-              <ion-card-title>{{ weatherTemp?.wind?.speed || 'N/A' }}</ion-card-title>
-              <ion-card-subtitle>Speed: </ion-card-subtitle>
-            </ion-card-header>
-          </ion-card>
+        <ion-card>
+          <ion-card-header style="text-align: center;">
+            <ion-card-title>{{ weatherTemp?.main?.humidity || 'N/A' }}</ion-card-title>
+            <ion-card-subtitle>Humidity: </ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
 
-          <ion-card>
-            <ion-item>
-              <ion-card-subtitle>Maximum Temperature: </ion-card-subtitle>
-              <span slot="end">{{ (weatherTemp?.main?.temp_max - 273.15).toFixed(0) }}</span>
-            </ion-item>
+        <ion-card>
+          <ion-card-header style="text-align: center;">
+            <ion-card-title>{{ weatherTemp?.wind?.speed || 'N/A' }}</ion-card-title>
+            <ion-card-subtitle>Speed: </ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
 
-            <ion-item>
-              <ion-card-subtitle>Minimum Temperature: </ion-card-subtitle>
-              <span slot="end">{{ (weatherTemp?.main?.temp_min - 273.15).toFixed(0) }}</span>
-            </ion-item>
+        <ion-card>
+          <ion-item>
+            <ion-card-subtitle>Maximum Temperature: </ion-card-subtitle>
+            <span slot="end">{{ (weatherTemp?.main?.temp_max - 273.15).toFixed(0) }}</span>
+          </ion-item>
 
-            <ion-item>
-              <ion-card-subtitle>Humidity:</ion-card-subtitle>
-              <span slot="end">{{ weatherTemp?.main?.humidity }}%</span>
-            </ion-item>
-          </ion-card>
-        </ion-col>
+          <ion-item>
+            <ion-card-subtitle>Minimum Temperature: </ion-card-subtitle>
+            <span slot="end">{{ (weatherTemp?.main?.temp_min - 273.15).toFixed(0) }}</span>
+          </ion-item>
+
+          <ion-item>
+            <ion-card-subtitle>Humidity:</ion-card-subtitle>
+            <span slot="end">{{ weatherTemp?.main?.humidity }}%</span>
+          </ion-item>
+        </ion-card>
       </ion-col>
 
       <ion-col size="8">
@@ -78,10 +72,10 @@
 
         <ion-card>
           <ion-card-header>
-            <ion-card-title>Weather in {{ weatherTemp?.main?.name }}</ion-card-title>
+            <ion-card-title>Weather in {{ weatherTemp?.name }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <img slot="end" [src]=weatherIcon alt="Weather Icon" />
+            <img slot="end" [src]="weatherIcon" alt="Weather Icon" />
             <p>{{ weatherDetails?.description }}</p>
           </ion-card-content>
         </ion-card>
