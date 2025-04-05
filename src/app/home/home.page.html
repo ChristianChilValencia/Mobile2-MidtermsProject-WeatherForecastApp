@@ -16,7 +16,7 @@
   </ion-toolbar>
 
   <ion-toolbar>
-    <ion-searchbar animated [(ngModel)]="cityName" placeholder="Enter city name" (ionInput)="loadData(); loadForecast()"></ion-searchbar>
+    <ion-searchbar animated [(ngModel)]="cityName" placeholder="Enter city name" (ionInput)="onCityNameChange()"></ion-searchbar>
   </ion-toolbar>
 
 </ion-header>

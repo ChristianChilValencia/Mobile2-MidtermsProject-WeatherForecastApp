@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Geolocation } from '@capacitor/geolocation';
 import { CommonService } from '../services/common.service';
-import { Storage } from '@capacitor/storage';
 import { ActionSheetController } from '@ionic/angular';
+import { Preferences } from '@capacitor/preferences';
 
 const API_KEY = environment.API_KEY;
 const API_URL = environment.API_URL;
@@ -31,8 +31,14 @@ export class HomePage {
     private actionSheetCtrl: ActionSheetController,
   ) {}
 
-  ngOnInit() {
-    this.getCurrentWeather();
+  async ngOnInit() {
+    await this.loadSavedData(); // Load saved cityName and other data
+    if (this.cityName) {
+      this.loadData(); // Load weather data for the saved cityName
+      this.loadForecast();
+    } else {
+      this.getCurrentWeather(); // Fetch current location if no cityName is saved
+    }
   }
 
   async settingsSheet(){
@@ -66,7 +72,7 @@ export class HomePage {
       this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
         next: async (results: any) => {
           console.log('Forecast Data:', results);
-          await Storage.set({
+          await Preferences.set({
             key: 'hourlyForecast',
             value: JSON.stringify(results),
           });
@@ -79,7 +85,7 @@ export class HomePage {
         },
         error: async (err) => {
           console.error('Error fetching hourly forecast data:', err);
-          const cachedData = await Storage.get({ key: 'hourlyForecast' });
+          const cachedData = await Preferences.get({ key: 'hourlyForecast' });
           if (cachedData.value) {
             console.log('Using cached hourly forecast data:', JSON.parse(cachedData.value));
             const results = JSON.parse(cachedData.value);
@@ -122,7 +128,7 @@ export class HomePage {
       this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
         next: async (results: any) => {
           console.log('Forecast Data:', results);
-          await Storage.set({
+          await Preferences.set({
             key: 'dailyForecast',
             value: JSON.stringify(results),
           });
@@ -133,7 +139,7 @@ export class HomePage {
         },
         error: async (err) => {
           console.error('Error fetching daily forecast data:', err);
-          const cachedData = await Storage.get({ key: 'dailyForecast' });
+          const cachedData = await Preferences.get({ key: 'dailyForecast' });
           if (cachedData.value) {
             console.log('Using cached daily forecast data:', JSON.parse(cachedData.value));
             const results = JSON.parse(cachedData.value);
@@ -150,10 +156,13 @@ export class HomePage {
 
   async loadData() {
     if (this.cityName) {
+      // Save the cityName to Preferences whenever it is updated
+      await Preferences.set({ key: 'cityName', value: this.cityName });
+
       this.httpClient.get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}`).subscribe({
         next: async (results: any) => {
           console.log(results);
-          await Storage.set({
+          await Preferences.set({
             key: 'currentWeather',
             value: JSON.stringify(results),
           });
@@ -163,10 +172,11 @@ export class HomePage {
           console.log('Weather Icon URL:', this.weatherIcon);
           this.weatherTemp.main.temp_max = Math.round(this.weatherTemp.main.temp_max - 273.15);
           this.weatherTemp.main.temp_min = Math.round(this.weatherTemp.main.temp_min - 273.15);
+          await this.saveDataToPreferences(); // Save data after successful fetch
         },
         error: async (err) => {
           console.error('Error fetching weather data:', err);
-          const cachedData = await Storage.get({ key: 'currentWeather' });
+          const cachedData = await Preferences.get({ key: 'currentWeather' });
           if (cachedData.value) {
             console.log('Using cached current weather data:', JSON.parse(cachedData.value));
             const results = JSON.parse(cachedData.value);
@@ -178,6 +188,30 @@ export class HomePage {
       });
     } else {
       console.error('No city name available to load data!');
+    }
+  }
+
+  async saveDataToPreferences() {
+    await Preferences.set({ key: 'cityName', value: this.cityName });
+    await Preferences.set({ key: 'location', value: JSON.stringify(this.location) });
+    console.log('Data saved to preferences.');
+  }
+
+  async onCityNameChange() {
+    // Save the updated cityName to Preferences
+    await Preferences.set({ key: 'cityName', value: this.cityName });
+    console.log('City name saved to preferences:', this.cityName);
+
+    // Load weather data and forecast for the updated cityName
+    this.loadData();
+    this.loadForecast();
+  }
+
+  async loadSavedData() {
+    const cityName = await Preferences.get({ key: 'cityName' });
+    if (cityName.value) {
+      this.cityName = cityName.value;
+      console.log('Loaded cityName from preferences:', this.cityName);
     }
   }
 }
