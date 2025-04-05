@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class CommonService {
-
+  
   constructor(private http:HttpClient) { }
   
   getLocation(){

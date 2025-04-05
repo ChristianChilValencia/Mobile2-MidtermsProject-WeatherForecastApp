@@ -75,24 +75,23 @@
             <p>{{ weatherDetails?.description }}</p>
           </ion-card-content>
         </ion-card>
-        <ion-row>
-          <ion-card>
-            <ion-card-header>
-              <ion-card-title>Monday</ion-card-title>
-            </ion-card-header>
-          </ion-card>
-          <ion-card>
-            <ion-card-header>
-              <ion-card-title>Tuesday</ion-card-title>
-            </ion-card-header>
-          </ion-card>
-          <ion-card>
-            <ion-card-header>
-              <ion-card-title>Wednesday</ion-card-title>
-            </ion-card-header>
+      </ion-col>
+    </ion-row>
 
-          </ion-card>
-        </ion-row>
+    <ion-row>
+      <ion-col size="2" *ngFor="let forecast of forecastData">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>{{ forecast.dt_txt | date: 'EEE, MMM d' }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <img [src]="'https://openweathermap.org/img/wn/' + forecast.weather[0].icon + '@2x.png'" alt="Weather Icon" />
+            <p>{{ forecast.weather[0].description }}</p>
+            <p>Temp: {{ (forecast.main.temp - 273.15).toFixed(0) }}°C</p>
+            <p>Humidity: {{ forecast.main.humidity }}%</p>
+            <p>Wind Speed: {{ forecast.wind.speed }} m/s</p>
+          </ion-card-content>
+        </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>

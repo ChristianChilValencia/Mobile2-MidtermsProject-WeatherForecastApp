@@ -20,22 +20,12 @@ export class HomePage {
   weatherDetails: any;
   cityName: string = 'location.city';
   location: any;
+  forecastData: any[] = [];
 
   constructor(public httpClient: HttpClient, private commonService:CommonService) {}
 
   ngOnInit() {
-    this.getCurrentWeather(); // Fetch current weather on initialization
-  }
-
-  getCityTimeDate(city: string) {
-    // const cityTimeZone = this.commonService.getCityTimeZone(city) as unknown as string | null;
-    // if (cityTimeZone && cityTimeZone.trim()) {
-    //   const cityDate = new Date(this.todayDate.toLocaleString('en-US', { timeZone: cityTimeZone }));
-    //   return cityDate;
-    // } else {
-    //   console.error('Invalid time zone provided:', cityTimeZone);
-    //   return this.todayDate;
-    // }
+    this.getCurrentWeather();
   }
 
   getCurrentWeather(){
@@ -45,9 +35,26 @@ export class HomePage {
       this.location = response; // Update the location property with the city name
       this.cityName = this.location.city; // Set cityName to the default value from location.city
       this.loadData(); // Load weather data for the default city
+      this.loadForecast(); // Load forecast data for the default city
     });
   }
 
+
+  loadForecast() {
+    if (this.cityName) {
+      this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}`).subscribe({
+        next: (results: any) => {
+          console.log('Forecast Data:', results);
+          this.forecastData = results.list.filter((_: any, index: number) => index % 8 === 0); // Get one forecast per day
+        },
+        error: (err) => {
+          console.error('Error fetching forecast data:', err);
+        },
+      });
+    } else {
+      console.error('No city name available to load forecast!');
+    }
+  }
 
   loadData() {
     if (this.cityName) {
