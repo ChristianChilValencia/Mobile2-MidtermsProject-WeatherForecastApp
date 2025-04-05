@@ -29,7 +29,7 @@
 
         <ion-card>
           <ion-card-header style="text-align: center;">
-            <ion-card-title>{{ weatherTemp?.main?.humidity || 'N/A' }}</ion-card-title>
+            <ion-card-title><span>{{ weatherTemp?.main?.humidity || 'N/A' }}%</span></ion-card-title>
             <ion-card-subtitle>Humidity: </ion-card-subtitle>
           </ion-card-header>
         </ion-card>
@@ -50,11 +50,6 @@
           <ion-item>
             <ion-card-subtitle>Minimum Temperature: </ion-card-subtitle>
             <span slot="end">{{ (weatherTemp?.main?.temp_min - 273.15).toFixed(0) }}</span>
-          </ion-item>
-
-          <ion-item>
-            <ion-card-subtitle>Humidity:</ion-card-subtitle>
-            <span slot="end">{{ weatherTemp?.main?.humidity }}%</span>
           </ion-item>
         </ion-card>
       </ion-col>
@@ -79,6 +74,24 @@
             <p>{{ weatherDetails?.description }}</p>
           </ion-card-content>
         </ion-card>
+        <ion-row>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Monday</ion-card-title>
+            </ion-card-header>
+          </ion-card>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Tuesday</ion-card-title>
+            </ion-card-header>
+          </ion-card>
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Wednesday</ion-card-title>
+            </ion-card-header>
+
+          </ion-card>
+        </ion-row>
       </ion-col>
     </ion-row>
   </ion-grid>
