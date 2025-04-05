@@ -18,9 +18,10 @@ export class HomePage {
   todayDate = new Date();
   weatherIcon: any;
   weatherDetails: any;
-  cityName: string = 'location.city';
-  location: any;
+  cityName: string = '';
+  location: any = {};
   forecastData: any[] = [];
+  forecast: any;
 
   constructor(public httpClient: HttpClient, private commonService:CommonService) {}
 
@@ -28,14 +29,41 @@ export class HomePage {
     this.getCurrentWeather();
   }
 
-  getCurrentWeather(){
-    console.log("Welcome to the city of", this.cityName); // Log the city name to the console
-    this.commonService.getLocation().subscribe((response) => {
-      console.log('Location Response:', response); // Log the response for debugging
-      this.location = response; // Update the location property with the city name
-      this.cityName = this.location.city; // Set cityName to the default value from location.city
-      this.loadData(); // Load weather data for the default city
-      this.loadForecast(); // Load forecast data for the default city
+  // API JSON WEATHER DATA INSTEAD OF GEOLOCATION
+  // getCurrentWeather(){
+  //   console.log("Welcome to the city of", this.cityName); // Log the city name to the console
+  //   this.commonService.getLocation().subscribe((response) => {
+  //     console.log('Location Response:', response); // Log the response for debugging
+  //     this.location = response; // Update the location property with the city name
+  //     this.cityName = this.location.city; // Set cityName to the default value from location.city
+  //     this.loadData(); // Load weather data for the default city
+  //     this.loadForecast(); // Load forecast data for the default city
+  //   });
+  // }
+
+  async getCurrentWeather() {
+    console.log("Fetching current location...");
+    (await this.commonService.getLocation()).subscribe({
+      next: (response: any) => {
+        console.log('Reverse Geocoding Response:', response);
+
+        // Extract the city name from the reverse geocoding response
+        // This is the Integration bro
+        if (response && response[0] && response[0].name) {
+          this.cityName = response[0].name;
+          this.location.city = response[0].name; // Set location.city
+          console.log('Detected City:', this.cityName);
+
+          // Load weather and forecast data for the detected city
+          this.loadData();
+          this.loadForecast();
+        } else {
+          console.error('City name not found in reverse geocoding response.');
+        }
+      },
+      error: (error: any) => {
+        console.error('Error fetching current weather:', error);
+      },
     });
   }
 
@@ -61,10 +89,14 @@ export class HomePage {
       this.httpClient.get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}`).subscribe({
         next: (results: any) => {
           console.log(results);
-          this.weatherTemp = results; // Store weather data
-          this.weatherDetails = results.weather[0]; // Extract weather details
-          this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@2x.png`; // Generate weather icon URL
+          this.weatherTemp = results;
+          this.weatherDetails = results.weather[0];
+          this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@2x.png`;
           console.log('Weather Icon URL:', this.weatherIcon);
+
+          this.weatherTemp.main.temp_max = Math.round(this.weatherTemp.main.temp_max - 273.15); // Convert temperature from Kelvin to Celsius
+          this.weatherTemp.main.temp_min = Math.round(this.weatherTemp.main.temp_min - 273.15); // Convert min temperature
+          this.forecast.main.temp = Math.round(this.weatherTemp.main.temp - 273.15); // Convert current temperature
         },
         error: (err) => {
           console.error('Error fetching weather data:', err); // Log errors if weather data fetch fails

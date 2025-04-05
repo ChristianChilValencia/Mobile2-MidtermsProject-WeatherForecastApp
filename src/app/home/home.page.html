@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>🌥️ WeatherForecastApp</ion-title>
-    <ion-title slot="end">City: {{ location.city }} </ion-title>
+    <ion-title slot="end">City: {{ location?.city }} </ion-title>
     <ion-buttons slot="end">
       <ion-button expand="block" (click)="getCurrentWeather()" class="responsive-button">
       <ion-icon slot="start" name="location-outline"></ion-icon>
@@ -12,7 +12,7 @@
   </ion-toolbar>
 
   <ion-toolbar>
-    <ion-searchbar animated [(ngModel)]="cityName" placeholder="Enter city name" (ionInput)="loadData()"></ion-searchbar>
+    <ion-searchbar animated [(ngModel)]="cityName" placeholder="Enter city name" (ionInput)="loadData(); loadForecast()"></ion-searchbar>
   </ion-toolbar>
 
 </ion-header>
@@ -37,20 +37,20 @@
 
         <ion-card>
           <ion-card-header style="text-align: center;">
-            <ion-card-title>{{ weatherTemp?.wind?.speed || 'N/A' }}</ion-card-title>
-            <ion-card-subtitle>Speed: </ion-card-subtitle>
+            <ion-card-title>{{ weatherTemp?.wind?.speed || 'N/A' }} m/s</ion-card-title>
+            <ion-card-subtitle>Wind Speed: </ion-card-subtitle>
           </ion-card-header>
         </ion-card>
 
         <ion-card>
           <ion-item>
             <ion-card-subtitle>Maximum Temperature: </ion-card-subtitle>
-            <span slot="end">{{ (weatherTemp?.main?.temp_max - 273.15).toFixed(0) }}</span>
+            <span slot="end">{{ weatherTemp?.main?.temp_max || 'N/A' }}°C</span>
           </ion-item>
 
           <ion-item>
             <ion-card-subtitle>Minimum Temperature: </ion-card-subtitle>
-            <span slot="end">{{ (weatherTemp?.main?.temp_min - 273.15).toFixed(0) }}</span>
+            <span slot="end">{{ weatherTemp?.main?.temp_min || 'N/A' }}°C</span>
           </ion-item>
         </ion-card>
       </ion-col>
@@ -58,18 +58,9 @@
       <ion-col size="8">
         <ion-card>
           <ion-card-header>
-            <ion-card-title>Today is {{ todayDate | date: "EEE dd MMM" }} at {{ todayDate | date: 'hh:mm:ss a' }}</ion-card-title>
+            <ion-card-title>Today is {{ todayDate | date: "EEE dd MMM" }} at {{ todayDate | date: 'hh:mm a' }} </ion-card-title>
           </ion-card-header>
           <ion-title>{{ weatherTemp?.name }} is {{ (weatherTemp?.main?.temp - 273.15).toFixed(0) }}<span>&deg;C</span> Today</ion-title><br>
-          <ion-title>
-            <ion-card-subtitle>Weather Details: {{ weatherTemp?.weather[0]?.description }}</ion-card-subtitle><br>
-          </ion-title>
-        </ion-card>
-
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Weather in {{ weatherTemp?.name }}</ion-card-title>
-          </ion-card-header>
           <ion-card-content>
             <img slot="end" [src]="weatherIcon" alt="Weather Icon" />
             <p>{{ weatherDetails?.description }}</p>
@@ -85,9 +76,9 @@
             <ion-card-title>{{ forecast.dt_txt | date: 'EEE, MMM d' }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <img [src]="'https://openweathermap.org/img/wn/' + forecast.weather[0].icon + '@2x.png'" alt="Weather Icon" />
+            <img [src]="'https://openweathermap.org/img/wn/'+forecast.weather[0].icon+'@2x.png'" alt="Weather Icon"/>
             <p>{{ forecast.weather[0].description }}</p>
-            <p>Temp: {{ (forecast.main.temp - 273.15).toFixed(0) }}°C</p>
+            <p>Temp: {{ forecast.main.temp }}°C</p>
             <p>Humidity: {{ forecast.main.humidity }}%</p>
             <p>Wind Speed: {{ forecast.wind.speed }} m/s</p>
           </ion-card-content>
