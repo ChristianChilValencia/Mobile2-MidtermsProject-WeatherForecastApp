@@ -67,13 +67,32 @@ export class HomePage {
     });
   }
 
+  // LOADFORECAST V1
+  // loadForecast() {
+  //   if (this.cityName) {
+  //     this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}`).subscribe({
+  //       next: (results: any) => {
+  //         console.log('Forecast Data:', results);
+  //         //THE 5 DAY FORECAST BRO
+  //         this.forecastData = results.list.filter((_: any, index: number) => index % 8 === 0); // Get one forecast per day
+  //       },
+  //       error: (err) => {
+  //         console.error('Error fetching forecast data:', err);
+  //       },
+  //     });
+  //   } else {
+  //     console.error('No city name available to load forecast!');
+  //   }
+  // }
 
   loadForecast() {
     if (this.cityName) {
       this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}`).subscribe({
         next: (results: any) => {
           console.log('Forecast Data:', results);
-          this.forecastData = results.list.filter((_: any, index: number) => index % 8 === 0); // Get one forecast per day
+  
+          // Filter to get one forecast per day (e.g., at 12:00 PM)
+          this.forecastData = results.list.filter((forecast: any) => forecast.dt_txt.includes('12:00:00'));
         },
         error: (err) => {
           console.error('Error fetching forecast data:', err);
