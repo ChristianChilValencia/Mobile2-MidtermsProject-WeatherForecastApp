@@ -3,6 +3,8 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Geolocation } from '@capacitor/geolocation';
 import { CommonService } from '../services/common.service';
+import { Storage } from '@capacitor/storage';
+import { ActionSheetController } from '@ionic/angular';
 
 const API_KEY = environment.API_KEY;
 const API_URL = environment.API_URL;
@@ -23,38 +25,86 @@ export class HomePage {
   forecastData: any[] = [];
   forecast: any;
 
-  constructor(public httpClient: HttpClient, private commonService:CommonService) {}
+  constructor(
+    public httpClient: HttpClient,
+    private commonService: CommonService,
+    private actionSheetCtrl: ActionSheetController,
+  ) {}
 
   ngOnInit() {
     this.getCurrentWeather();
   }
 
-  // API JSON WEATHER DATA INSTEAD OF GEOLOCATION
-  // getCurrentWeather(){
-  //   console.log("Welcome to the city of", this.cityName); // Log the city name to the console
-  //   this.commonService.getLocation().subscribe((response) => {
-  //     console.log('Location Response:', response); // Log the response for debugging
-  //     this.location = response; // Update the location property with the city name
-  //     this.cityName = this.location.city; // Set cityName to the default value from location.city
-  //     this.loadData(); // Load weather data for the default city
-  //     this.loadForecast(); // Load forecast data for the default city
-  //   });
-  // }
+  async settingsSheet(){
+    const settingsSheet = await this.actionSheetCtrl.create({
+      header: 'Settings',
+      buttons: [
+        {
+          text: 'Change Celsius to Fahrenheit',
+          handler: () => {
+            // this.getCurrentWeather();
+            console.log("Change Celsius to Fahrenheit");
+          },
+        },
+        {
+          text: 'Refresh',
+          handler: () => {
+            window.location.reload();
+          },
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+      ],
+    });
+    await settingsSheet.present();
+  }
+
+  async loadHourlyForecast() {
+    if (this.cityName) {
+      this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
+        next: async (results: any) => {
+          console.log('Forecast Data:', results);
+          await Storage.set({
+            key: 'hourlyForecast',
+            value: JSON.stringify(results),
+          });
+          const today = new Date().toISOString().split('T')[0];
+          this.forecastData = results.list.filter((forecast: any) => {
+            const forecastDate = forecast.dt_txt.split(' ')[0];
+            return forecastDate === today;
+          });
+          console.log('Hourly Forecast for Today:', this.forecastData);
+        },
+        error: async (err) => {
+          console.error('Error fetching hourly forecast data:', err);
+          const cachedData = await Storage.get({ key: 'hourlyForecast' });
+          if (cachedData.value) {
+            console.log('Using cached hourly forecast data:', JSON.parse(cachedData.value));
+            const results = JSON.parse(cachedData.value);
+            const today = new Date().toISOString().split('T')[0];
+            this.forecastData = results.list.filter((forecast: any) => {
+              const forecastDate = forecast.dt_txt.split(' ')[0];
+              return forecastDate === today;
+            });
+          }
+        },
+      });
+    } else {
+      console.error('No city name available to load hourly forecast!');
+    }
+  }
 
   async getCurrentWeather() {
     console.log("Fetching current location...");
     (await this.commonService.getLocation()).subscribe({
       next: (response: any) => {
         console.log('Reverse Geocoding Response:', response);
-
-        // Extract the city name from the reverse geocoding response
-        // This is the Integration bro
         if (response && response[0] && response[0].name) {
           this.cityName = response[0].name;
-          this.location.city = response[0].name; // Set location.city
+          this.location.city = response[0].name;
           console.log('Detected City:', this.cityName);
-
-          // Load weather and forecast data for the detected city
           this.loadData();
           this.loadForecast();
         } else {
@@ -67,35 +117,30 @@ export class HomePage {
     });
   }
 
-  // LOADFORECAST V1
-  // loadForecast() {
-  //   if (this.cityName) {
-  //     this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}`).subscribe({
-  //       next: (results: any) => {
-  //         console.log('Forecast Data:', results);
-  //         //THE 5 DAY FORECAST BRO
-  //         this.forecastData = results.list.filter((_: any, index: number) => index % 8 === 0); // Get one forecast per day
-  //       },
-  //       error: (err) => {
-  //         console.error('Error fetching forecast data:', err);
-  //       },
-  //     });
-  //   } else {
-  //     console.error('No city name available to load forecast!');
-  //   }
-  // }
-
-  loadForecast() {
+  async loadForecast() {
     if (this.cityName) {
-      this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}`).subscribe({
-        next: (results: any) => {
+      this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
+        next: async (results: any) => {
           console.log('Forecast Data:', results);
-  
-          // Filter to get one forecast per day (e.g., at 12:00 PM)
-          this.forecastData = results.list.filter((forecast: any) => forecast.dt_txt.includes('12:00:00'));
+          await Storage.set({
+            key: 'dailyForecast',
+            value: JSON.stringify(results),
+          });
+          this.forecastData = results.list.filter((forecast: any) => {
+            return forecast.dt_txt.includes('12:00:00');
+          });
+          console.log('Daily Forecast:', this.forecastData);
         },
-        error: (err) => {
-          console.error('Error fetching forecast data:', err);
+        error: async (err) => {
+          console.error('Error fetching daily forecast data:', err);
+          const cachedData = await Storage.get({ key: 'dailyForecast' });
+          if (cachedData.value) {
+            console.log('Using cached daily forecast data:', JSON.parse(cachedData.value));
+            const results = JSON.parse(cachedData.value);
+            this.forecastData = results.list.filter((forecast: any) => {
+              return forecast.dt_txt.includes('12:00:00');
+            });
+          }
         },
       });
     } else {
@@ -103,28 +148,36 @@ export class HomePage {
     }
   }
 
-  loadData() {
+  async loadData() {
     if (this.cityName) {
       this.httpClient.get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}`).subscribe({
-        next: (results: any) => {
+        next: async (results: any) => {
           console.log(results);
+          await Storage.set({
+            key: 'currentWeather',
+            value: JSON.stringify(results),
+          });
           this.weatherTemp = results;
           this.weatherDetails = results.weather[0];
           this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@2x.png`;
           console.log('Weather Icon URL:', this.weatherIcon);
-
-          this.weatherTemp.main.temp_max = Math.round(this.weatherTemp.main.temp_max - 273.15); // Convert temperature from Kelvin to Celsius
-          this.weatherTemp.main.temp_min = Math.round(this.weatherTemp.main.temp_min - 273.15); // Convert min temperature
-          this.forecast.main.temp = Math.round(this.weatherTemp.main.temp - 273.15); // Convert current temperature
+          this.weatherTemp.main.temp_max = Math.round(this.weatherTemp.main.temp_max - 273.15);
+          this.weatherTemp.main.temp_min = Math.round(this.weatherTemp.main.temp_min - 273.15);
         },
-        error: (err) => {
-          console.error('Error fetching weather data:', err); // Log errors if weather data fetch fails
+        error: async (err) => {
+          console.error('Error fetching weather data:', err);
+          const cachedData = await Storage.get({ key: 'currentWeather' });
+          if (cachedData.value) {
+            console.log('Using cached current weather data:', JSON.parse(cachedData.value));
+            const results = JSON.parse(cachedData.value);
+            this.weatherTemp = results;
+            this.weatherDetails = results.weather[0];
+            this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@2x.png`;
+          }
         },
       });
     } else {
-      console.error('No city name available to load data!'); // Handle case where city name is not available
+      console.error('No city name available to load data!');
     }
   }
-
-
 }

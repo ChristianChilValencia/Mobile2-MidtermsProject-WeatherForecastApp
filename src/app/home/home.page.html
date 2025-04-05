@@ -1,13 +1,17 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>🌥️ WeatherForecastApp</ion-title>
-    <ion-title slot="end">City: {{ location?.city }} </ion-title>
+    <ion-title slot="end">City: {{ location.city }} </ion-title>
     <ion-buttons slot="end">
       <ion-button expand="block" (click)="getCurrentWeather()" class="responsive-button">
       <ion-icon slot="start" name="location-outline"></ion-icon>
       Get Current Weather
       </ion-button>
     </ion-buttons>
+
+    <ion-button slot="end" (click)="settingsSheet()">
+      <ion-icon name="settings-outline"></ion-icon>
+    </ion-button>
 
   </ion-toolbar>
 
@@ -18,6 +22,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+
   <ion-grid>
     <ion-row>
       <ion-col size="4">
@@ -45,12 +50,12 @@
         <ion-card>
           <ion-item>
             <ion-card-subtitle>Maximum Temperature: </ion-card-subtitle>
-            <span slot="end">{{ weatherTemp?.main?.temp_max || 'N/A' }}°C</span>
+            <span slot="end">{{ weatherTemp?.main?.temp_max || 'N/A' }}</span>
           </ion-item>
 
           <ion-item>
             <ion-card-subtitle>Minimum Temperature: </ion-card-subtitle>
-            <span slot="end">{{ weatherTemp?.main?.temp_min || 'N/A' }}°C</span>
+            <span slot="end">{{ weatherTemp?.main?.temp_min || 'N/A' }}</span>
           </ion-item>
         </ion-card>
       </ion-col>
@@ -66,6 +71,16 @@
             <p>{{ weatherDetails?.description }}</p>
           </ion-card-content>
         </ion-card>
+        <ion-card *ngIf="forecastData.length > 0">
+          <ion-card-header>
+            <ion-card-title>Hourly Forecast for Today</ion-card-title>
+          </ion-card-header>
+          <ion-item *ngFor="let forecast of forecastData">
+              <strong>Time:</strong> {{ forecast.dt_txt | date: 'shortTime' }}<br>
+              <strong>Temperature:</strong> {{ forecast.main.temp }}°C<br>
+              <strong>Weather:</strong> {{ forecast.weather[0].description }}
+          </ion-item>
+        </ion-card>
       </ion-col>
     </ion-row>
 
@@ -78,12 +93,13 @@
           <ion-card-content>
             <img [src]="'https://openweathermap.org/img/wn/'+forecast.weather[0].icon+'@2x.png'" alt="Weather Icon"/>
             <p>{{ forecast.weather[0].description }}</p>
-            <p>Temp: {{ forecast.main.temp }}°C</p>
+            <p>Temp: {{ forecast.main.temp }}</p>
             <p>Humidity: {{ forecast.main.humidity }}%</p>
             <p>Wind Speed: {{ forecast.wind.speed }} m/s</p>
           </ion-card-content>
         </ion-card>
       </ion-col>
+      
     </ion-row>
   </ion-grid>
 
