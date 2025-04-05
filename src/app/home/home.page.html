@@ -1,13 +1,14 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>🌥️ WeatherForecastApp</ion-title>
-
+    <ion-title slot="end">City: {{ location.city }} </ion-title>
     <ion-buttons slot="end">
-      <ion-button expand="block" (click)="loadData()" class="responsive-button">
+      <ion-button expand="block" (click)="getCurrentWeather()" class="responsive-button">
       <ion-icon slot="start" name="location-outline"></ion-icon>
       Get Current Weather
       </ion-button>
     </ion-buttons>
+
   </ion-toolbar>
 
   <ion-toolbar>
@@ -95,4 +96,5 @@
       </ion-col>
     </ion-row>
   </ion-grid>
+
 </ion-content>
