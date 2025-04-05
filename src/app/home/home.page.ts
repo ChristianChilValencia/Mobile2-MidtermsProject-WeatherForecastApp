@@ -19,31 +19,33 @@ export class HomePage {
   weatherIcon: any;
   weatherDetails: any;
   cityName: string = 'location.city';
-  location: any; 
-
-
-  // currentCoords: any;
-  // checkPermissionStatus: any;
-  // location: { city: string } = { city: '' }; // Define a location property to store the city name
+  location: any;
 
   constructor(public httpClient: HttpClient, private commonService:CommonService) {}
 
   ngOnInit() {
+    this.getCurrentWeather(); // Fetch current weather on initialization
+  }
+
+  getCityTimeDate(city: string) {
+    // const cityTimeZone = this.commonService.getCityTimeZone(city) as unknown as string | null;
+    // if (cityTimeZone && cityTimeZone.trim()) {
+    //   const cityDate = new Date(this.todayDate.toLocaleString('en-US', { timeZone: cityTimeZone }));
+    //   return cityDate;
+    // } else {
+    //   console.error('Invalid time zone provided:', cityTimeZone);
+    //   return this.todayDate;
+    // }
+  }
+
+  getCurrentWeather(){
+    console.log("Welcome to the city of", this.cityName); // Log the city name to the console
     this.commonService.getLocation().subscribe((response) => {
       console.log('Location Response:', response); // Log the response for debugging
       this.location = response; // Update the location property with the city name
       this.cityName = this.location.city; // Set cityName to the default value from location.city
       this.loadData(); // Load weather data for the default city
     });
-
-  }
-
-
-  getCurrentWeather(){
-    console.log("Welcome to the city of", this.cityName); // Log the city name to the console
-    this.location = Response; // Update the location property with the city name
-    this.cityName = this.location.city; // Set cityName to the default value from location.city
-    this.loadData(); // Load weather data for the default city
   }
 
 
