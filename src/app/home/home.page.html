@@ -94,7 +94,47 @@
       </ion-card>
     </ion-col>
   </ion-row>
-
+      
+    <!-- Daily Forecast for Multiple Days -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Daily Forecast for Upcoming Days</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div *ngIf="forecastData.length > 0">
+          <div *ngFor="let forecast of forecastData" class="forecast-item">
+            <p><strong>Date:</strong> {{ forecast.dt_txt | date: 'EEE, MMM d' }}</p>
+            <p><strong>Temperature:</strong> {{ forecast.main.temp }}°{{ temperatureUnit }}</p>
+            <p><strong>Max Temp:</strong> {{ forecast.main.temp_max }}°{{ temperatureUnit }}</p>
+            <p><strong>Min Temp:</strong> {{ forecast.main.temp_min }}°{{ temperatureUnit }}</p>
+            <img [src]="'https://openweathermap.org/img/wn/' + forecast.weather[0].icon + '@2x.png'" alt="Weather Icon">
+            <p><strong>Description:</strong> {{ forecast.weather[0].description }}</p>
+          </div>
+        </div>
+        <div *ngIf="forecastData.length === 0">
+          <p>No daily forecast data available.</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+    <!-- Three-Hour Forecast -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Three-Hour Forecast</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div *ngIf="threeHourForecastData.length > 0">
+          <div *ngFor="let forecast of threeHourForecastData" class="forecast-item">
+            <p><strong>Time:</strong> {{ forecast.dt_txt | date: 'shortTime' }}</p>
+            <p><strong>Temperature:</strong> {{ forecast.main.temp }}°{{ temperatureUnit }}</p>
+            <img [src]="'https://openweathermap.org/img/wn/' + forecast.weather[0].icon + '@2x.png'" alt="Weather Icon">
+            <p><strong>Description:</strong> {{ forecast.weather[0].description }}</p>
+          </div>
+        </div>
+        <div *ngIf="threeHourForecastData.length === 0">
+          <p>No three-hour forecast data available.</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
 </ion-content>
 
 <ion-footer>

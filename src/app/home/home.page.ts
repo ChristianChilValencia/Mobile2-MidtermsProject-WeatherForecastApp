@@ -23,6 +23,7 @@ export class HomePage {
   cityName: string = '';
   location: any = {};
   forecastData: any[] = [];
+  threeHourForecastData: any[] = [];
   forecast: any;
   temperatureUnit: 'C' | 'F' = 'C'; // Default to Celsius
   backgroundImage = 'assets/kuyakim.jpg'; 
@@ -42,7 +43,7 @@ export class HomePage {
     }
     if (this.cityName) {
       this.loadData();
-      this.loadForecast(); // Load forecast data if cityName is available
+      this.loadForecast();
     } else {
       this.getCurrentWeather();
     }
@@ -55,72 +56,72 @@ export class HomePage {
     return parseFloat(temp.toFixed(1)); // Return Celsius rounded to 1 decimal place
   }
 
-  async getCurrentWeather() {
-    console.log("Fetching current location...");
-    (await this.commonService.getLocation()).subscribe({
-      next: (response: any) => {
-        console.log('Reverse Geocoding Response:', response);
-        if (response && response[0] && response[0].name) {
-          this.cityName = response[0].name;
-          this.location.city = response[0].name;
-          console.log('Detected City:', this.cityName);
-          this.loadData();
-          // this.loadForecast();
-        } else {
-          console.error('City name not found in reverse geocoding response.');
-        }
-      },
-      error: (error: any) => {
-        console.error('Error fetching current weather:', error);
-      },
-    });
-  }
+  // async getCurrentWeather() {
+  //   console.log("Fetching current location...");
+  //   (await this.commonService.getLocation()).subscribe({
+  //     next: (response: any) => {
+  //       console.log('Reverse Geocoding Response:', response);
+  //       if (response && response[0] && response[0].name) {
+  //         this.cityName = response[0].name;
+  //         this.location.city = response[0].name;
+  //         console.log('Detected City:', this.cityName);
+  //         this.loadData();
+  //         // this.loadForecast();
+  //       } else {
+  //         console.error('City name not found in reverse geocoding response.');
+  //       }
+  //     },
+  //     error: (error: any) => {
+  //       console.error('Error fetching current weather:', error);
+  //     },
+  //   });
+  // }
 
-  async loadData() {
-    if (this.cityName) {
-      await Preferences.set({
-      key: 'currentWeather',
-      value: JSON.stringify(this.weatherTemp),
-      });
+  // async loadData() {
+  //   if (this.cityName) {
+  //     await Preferences.set({
+  //     key: 'currentWeather',
+  //     value: JSON.stringify(this.weatherTemp),
+  //     });
 
-      // Save forecast data to Preferences (if implemented)
-      // await Preferences.set({
-      // key: 'dailyForecast',
-      // value: JSON.stringify(forecastResults),
-      // });
+  //     // Save forecast data to Preferences (if implemented)
+  //     // await Preferences.set({
+  //     // key: 'dailyForecast',
+  //     // value: JSON.stringify(forecastResults),
+  //     // });
 
-      this.httpClient.get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
-        next: async (results: any) => {
-          console.log(results);
-          await Preferences.set({
-            key: 'currentWeather',
-            value: JSON.stringify(results),
-          });
-          this.weatherTemp = results;
-          this.weatherTemp.main.temp = this.convertTemperature(this.weatherTemp.main.temp); // No need to subtract 273.15 as API already provides Celsius
-          this.weatherTemp.main.temp_max = this.convertTemperature(this.weatherTemp.main.temp_max);
-          this.weatherTemp.main.temp_min = this.convertTemperature(this.weatherTemp.main.temp_min);
-          this.weatherDetails = results.weather[0];
-          this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@4x.png`;
-          console.log('Weather Icon URL:', this.weatherIcon);
-          await this.saveDataToPreferences(); // Save data after successful fetch
-        },
-        error: async (err) => {
-          console.error('Error fetching weather data:', err);
-          const cachedData = await Preferences.get({ key: 'currentWeather' });
-          if (cachedData.value) {
-            console.log('Using cached current weather data:', JSON.parse(cachedData.value));
-            const results = JSON.parse(cachedData.value);
-            this.weatherTemp = results;
-            this.weatherDetails = results.weather[0];
-            this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}10d@2x.png`;
-          }
-        },
-      });
-    } else {
-      console.error('No city name available to load data!');
-    }
-  }
+  //     this.httpClient.get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
+  //       next: async (results: any) => {
+  //         console.log(results);
+  //         await Preferences.set({
+  //           key: 'currentWeather',
+  //           value: JSON.stringify(results),
+  //         });
+  //         this.weatherTemp = results;
+  //         this.weatherTemp.main.temp = this.convertTemperature(this.weatherTemp.main.temp); // No need to subtract 273.15 as API already provides Celsius
+  //         this.weatherTemp.main.temp_max = this.convertTemperature(this.weatherTemp.main.temp_max);
+  //         this.weatherTemp.main.temp_min = this.convertTemperature(this.weatherTemp.main.temp_min);
+  //         this.weatherDetails = results.weather[0];
+  //         this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@4x.png`;
+  //         console.log('Weather Icon URL:', this.weatherIcon);
+  //         await this.saveDataToPreferences(); // Save data after successful fetch
+  //       },
+  //       error: async (err) => {
+  //         console.error('Error fetching weather data:', err);
+  //         const cachedData = await Preferences.get({ key: 'currentWeather' });
+  //         if (cachedData.value) {
+  //           console.log('Using cached current weather data:', JSON.parse(cachedData.value));
+  //           const results = JSON.parse(cachedData.value);
+  //           this.weatherTemp = results;
+  //           this.weatherDetails = results.weather[0];
+  //           this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}10d@2x.png`;
+  //         }
+  //       },
+  //     });
+  //   } else {
+  //     console.error('No city name available to load data!');
+  //   }
+  // }
 
   async onCityNameChange() {
     await Preferences.set({ key: 'cityName', value: this.cityName });
@@ -187,48 +188,44 @@ export class HomePage {
     await settingsSheet.present();
   }
 
-  
 
 
 
 
+  async getCurrentWeather() {
+    console.log("Fetching current location...");
+    (await this.commonService.getLocation()).subscribe({
+      next: (response: any) => {
+        console.log('Reverse Geocoding Response:', response);
 
+        // Extract the city name from the reverse geocoding response
+        // This is the Integration bro
+        if (response && response[0] && response[0].name) {
+          this.cityName = response[0].name;
+          this.location.city = response[0].name; // Set location.city
+          console.log('Detected City:', this.cityName);
 
-
-
-
-  // new code for forecast data
-  async forecastCurrentDate() {
-    const today = new Date();
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Start at 12:00 AM
-    const endOfDay = new Date(today.setHours(23, 59, 59, 999)); // End at 11:59 PM
-  
-    this.forecastData = this.forecastData.filter((forecast: any) => {
-      const forecastDate = new Date(forecast.dt_txt);
-      return forecastDate >= startOfDay && forecastDate <= endOfDay;
-    }).map((forecast: any) => {
-      // Convert the temperature to the selected unit
-      forecast.main.temp = this.convertTemperature(forecast.main.temp);
-      forecast.main.temp_max = this.convertTemperature(forecast.main.temp_max);
-      forecast.main.temp_min = this.convertTemperature(forecast.main.temp_min);
-      return forecast;
+          // Load weather and forecast data for the detected city
+          this.loadData();
+          this.loadForecast();
+        } else {
+          console.error('City name not found in reverse geocoding response.');
+        }
+      },
+      error: (error: any) => {
+        console.error('Error fetching current weather:', error);
+      },
     });
-  
-    console.log('Filtered hourly forecast for today with converted temperatures:', this.forecastData);
   }
 
-  async loadForecast() {
+  loadForecast() {
     if (this.cityName) {
-      this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
-        next: async (results: any) => {
+      this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}`).subscribe({
+        next: (results: any) => {
           console.log('Forecast Data:', results);
-          this.forecastData = results.list.map((forecast: any) => {
-            forecast.main.temp = this.convertTemperature(forecast.main.temp);
-            return forecast;
-          });
   
-          // Filter today's hourly forecast
-          await this.forecastCurrentDate();
+          // Filter to get one forecast per day (e.g., at 12:00 PM)
+          this.forecastData = results.list.filter((forecast: any) => forecast.dt_txt.includes('12:00:00'));
         },
         error: (err) => {
           console.error('Error fetching forecast data:', err);
@@ -239,17 +236,52 @@ export class HomePage {
     }
   }
 
+  loadData() {
+    if (this.cityName) {
+      this.httpClient.get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}`).subscribe({
+        next: (results: any) => {
+          console.log(results);
+          this.weatherTemp = results;
+          this.weatherDetails = results.weather[0];
+          this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@2x.png`;
+          console.log('Weather Icon URL:', this.weatherIcon);
 
+           this.weatherTemp.main.temp_max = Math.round(this.weatherTemp.main.temp_max - 273.15); // Convert temperature from Kelvin to Celsius
+          this.weatherTemp.main.temp_min = Math.round(this.weatherTemp.main.temp_min - 273.15); // Convert min temperature
+          this.weatherTemp.main.temp = Math.round(this.weatherTemp.main.temp - 273.15); // Convert current temperature
+          return this.weatherTemp;
+        },
+        error: (err) => {
+          console.error('Error fetching weather data:', err); // Log errors if weather data fetch fails
+        },
+      });
+    } else {
+      console.error('No city name available to load data!'); // Handle case where city name is not available
+    }
+  }
 
+  loadThreeHourForecast() {
+    if (this.cityName) {
+      this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}`).subscribe({
+        next: (results: any) => {
+          console.log('3-Hour Forecast Data:', results);
 
-
-
-
-
-
-
-
-
-
+          // Extract the 3-hour interval forecast data
+          this.forecastData = results.list.slice(0, 8).map((forecast: any) => ({
+            time: forecast.dt_txt,
+            temp: this.convertTemperature(forecast.main.temp),
+            weather: forecast.weather[0],
+            icon: `https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`,
+          }));
+          console.log('Processed 3-Hour Forecast:', this.forecastData);
+        },
+        error: (err) => {
+          console.error('Error fetching 3-hour forecast data:', err);
+        },
+      });
+    } else {
+      console.error('No city name available to load 3-hour forecast!');
+    }
+  }
 }
 
