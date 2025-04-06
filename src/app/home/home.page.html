@@ -1,22 +1,6 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>🌥️ WeatherForecastApp</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="getCurrentWeather()" class="responsive-button">
-        <ion-icon slot="start" name="location-outline"></ion-icon>
-        Get Weather
-      </ion-button>
-      <ion-button (click)="settingsSheet()">
-        <ion-icon name="settings-outline"></ion-icon>
-      </ion-button>
-      <ion-button (click)="toggleDarkMode()">
-        <ion-icon name="moon-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-
-  <ion-toolbar>
-    <ion-searchbar animated [(ngModel)]="cityName" placeholder="Enter city name" (ionInput)="onCityNameChange()"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
@@ -118,6 +102,41 @@
         </ion-card>
       </ion-col>
     </ion-row>
-
   </ion-grid>
+
+  <!-- QUOTE LANG NI IDOL KUYA KIM -->
+  <ion-row>
+    <ion-col size="12">
+      <ion-card>
+        <ion-card-content style="text-align: center;">
+          <ion-card-subtitle>"Ang buhay ay weather-weather lang" - Kuya Kim</ion-card-subtitle>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-searchbar animated [(ngModel)]="cityName" placeholder="Enter city name" (ionInput)="onCityNameChange()"></ion-searchbar>
+  </ion-toolbar>
+
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <ion-button expand="block" (click)="getCurrentWeather()" fill="clear">
+            <ion-icon slot="start" name="location-outline"></ion-icon>
+            Get Weather
+          </ion-button>
+        </ion-col>
+        <ion-col size="6">
+          <ion-button expand="block" (click)="settingsSheet()" fill="clear">
+            <ion-icon slot="start" name="settings-outline"></ion-icon>
+            Settings
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-footer>
