@@ -52,7 +52,44 @@ export class CommonService {
     }
   }
 
-
+    // Enable notifications for severe weather alerts
+    async enableNotifications() {
+      await Preferences.set({ key: 'notificationsEnabled', value: 'true' });
+      console.log('Notifications for severe weather alerts enabled.');
+    }
   
+    // Disable notifications for severe weather alerts
+    async disableNotifications() {
+      await Preferences.set({ key: 'notificationsEnabled', value: 'false' });
+      console.log('Notifications for severe weather alerts disabled.');
+    }
+  
+    // Check if notifications are enabled
+    async areNotificationsEnabled(): Promise<boolean> {
+      const { value } = await Preferences.get({ key: 'notificationsEnabled' });
+      return value === 'true';
+    }
 
+    async checkForSevereWeatherAlerts() {
+      const notificationsEnabled = await this.commonService.areNotificationsEnabled();
+      if (!notificationsEnabled) {
+        console.log('Notifications are disabled. Skipping severe weather alerts.');
+        return;
+      }
+    
+      // Logic to fetch and display severe weather alerts
+      this.httpClient.get(`${API_URL}/alerts?q=${this.cityName}&appid=${API_KEY}`).subscribe({
+        next: (alerts: any) => {
+          if (alerts && alerts.length > 0) {
+            console.log('Severe weather alerts:', alerts);
+            // Display alerts to the user (e.g., using a toast or modal)
+          } else {
+            console.log('No severe weather alerts.');
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching severe weather alerts:', err);
+        },
+      });
+    }
 }

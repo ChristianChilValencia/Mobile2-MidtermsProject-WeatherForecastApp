@@ -189,9 +189,22 @@ export class HomePage {
 
   // ACTION SHEETS ✅✅✅  
   async settingsSheet() {
+    const notificationsEnabled = await this.commonService.areNotificationsEnabled();
+
     const settingsSheet = await this.actionSheetCtrl.create({
       header: 'Settings',
       buttons: [
+      {
+        text: notificationsEnabled ? 'Disable Notifications' : 'Enable Notifications',
+        icon: notificationsEnabled ? 'notifications-off-outline' : 'notifications-outline',
+        handler: async () => {
+          if (notificationsEnabled) {
+            await this.commonService.disableNotifications();
+          } else {
+            await this.commonService.enableNotifications();
+          }
+        },
+      },
       {
         text: `Switch to ${this.temperatureUnit === 'C' ? 'Fahrenheit' : 'Celsius'}`,
         icon: this.temperatureUnit === 'C' ? 'thermometer-outline' : 'thermometer',
@@ -230,6 +243,29 @@ export class HomePage {
       ],
     });
     await settingsSheet.present();
+  }
+
+  async checkForSevereWeatherAlerts() {
+    const notificationsEnabled = await this.commonService.areNotificationsEnabled();
+    if (!notificationsEnabled) {
+      console.log('Notifications are disabled. Skipping severe weather alerts.');
+      return;
+    }
+  
+    // Logic to fetch and display severe weather alerts
+    this.httpClient.get(`${API_URL}/alerts?q=${this.cityName}&appid=${API_KEY}`).subscribe({
+      next: (alerts: any) => {
+        if (alerts && alerts.length > 0) {
+          console.log('Severe weather alerts:', alerts);
+          // Display alerts to the user (e.g., using a toast or modal)
+        } else {
+          console.log('No severe weather alerts.');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching severe weather alerts:', err);
+      },
+    });
   }
 }
 
