@@ -1,115 +1,123 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>🌥️ WeatherForecastApp</ion-title>
-    <ion-title slot="end">City: {{ weatherTemp?.name }} </ion-title>
     <ion-buttons slot="end">
-      <ion-button expand="block" (click)="getCurrentWeather()" class="responsive-button">
-      <ion-icon slot="start" name="location-outline"></ion-icon>
-      Get Current Weather
+      <ion-button (click)="getCurrentWeather()" class="responsive-button">
+        <ion-icon slot="start" name="location-outline"></ion-icon>
+        Get Weather
+      </ion-button>
+      <ion-button (click)="settingsSheet()">
+        <ion-icon name="settings-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="toggleDarkMode()">
+        <ion-icon name="moon-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-
-    <ion-button slot="end" (click)="settingsSheet()">
-      <ion-icon name="settings-outline"></ion-icon>
-    </ion-button>
-
   </ion-toolbar>
 
   <ion-toolbar>
     <ion-searchbar animated [(ngModel)]="cityName" placeholder="Enter city name" (ionInput)="onCityNameChange()"></ion-searchbar>
   </ion-toolbar>
-
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content>
+  <div
+    class="background-image"
+    [style.backgroundImage]="'url(' + backgroundImage + ')'"
+  ></div>
 
   <ion-grid>
     <ion-row>
-      <ion-col size="4">
+      <ion-col size="12">
         <ion-card>
           <ion-card-header style="text-align: center;">
             <ion-card-title>{{ weatherTemp?.main?.temp || 'N/A' }}°{{ temperatureUnit }}</ion-card-title>
-            <ion-card-subtitle>Temperature: </ion-card-subtitle>
+            <ion-card-subtitle>Temperature</ion-card-subtitle>
           </ion-card-header>
         </ion-card>
+      </ion-col>
 
+      <ion-col size="6">
         <ion-card>
           <ion-card-header style="text-align: center;">
-            <ion-card-title><span>{{ weatherTemp?.main?.humidity || 'N/A' }}%</span></ion-card-title>
-            <ion-card-subtitle>Humidity: </ion-card-subtitle>
+            <ion-card-title>{{ weatherTemp?.main?.humidity || 'N/A' }}%</ion-card-title>
+            <ion-card-subtitle>Humidity</ion-card-subtitle>
           </ion-card-header>
         </ion-card>
+      </ion-col>
 
+      <ion-col size="6">
         <ion-card>
           <ion-card-header style="text-align: center;">
             <ion-card-title>{{ weatherTemp?.wind?.speed || 'N/A' }} m/s</ion-card-title>
-            <ion-card-subtitle>Wind Speed: </ion-card-subtitle>
+            <ion-card-subtitle>Wind Speed</ion-card-subtitle>
           </ion-card-header>
         </ion-card>
+      </ion-col>
 
+      <ion-col size="12">
         <ion-card>
           <ion-item>
-            <ion-card-subtitle>Maximum Temperature: </ion-card-subtitle>
+            <ion-card-subtitle>Max Temp:</ion-card-subtitle>
             <span slot="end">{{ weatherTemp?.main?.temp_max || 'N/A' }}°{{ temperatureUnit }}</span>
           </ion-item>
-
           <ion-item>
-            <ion-card-subtitle>Minimum Temperature: </ion-card-subtitle>
+            <ion-card-subtitle>Min Temp:</ion-card-subtitle>
             <span slot="end">{{ weatherTemp?.main?.temp_min || 'N/A' }}°{{ temperatureUnit }}</span>
           </ion-item>
         </ion-card>
       </ion-col>
+    </ion-row>
 
-      <ion-col size="8">
+    <ion-row>
+      <ion-col size="12">
         <ion-card>
           <ion-card-header>
-            <ion-card-title>Today is {{ todayDate | date: "EEE dd MMM" }} at {{ todayDate | date: 'hh:mm a' }} </ion-card-title>
+            <ion-card-title>Today: {{ todayDate | date: "EEE dd MMM" }} at {{ todayDate | date: 'hh:mm a' }}</ion-card-title>
           </ion-card-header>
-          <ion-title>{{ weatherTemp?.name }} is {{ weatherTemp?.main?.temp || 'N/A' }}°{{ temperatureUnit }} Today</ion-title><br>
           <ion-card-content>
-            <img slot="end" [src]="weatherIcon" alt="Weather Icon" />
+            <img [src]="weatherIcon" alt="Weather Icon" style="width: 50px; height: 50px;" />
             <p>{{ weatherDetails?.description }}</p>
           </ion-card-content>
         </ion-card>
-
-
-      <ion-card>
-        <ion-accordion-group>
-          <ion-accordion>
-            <ion-item slot="header">
-              <ion-label>Hourly Forecast for Today</ion-label>
-            </ion-item>
-            <ion-list slot="content" *ngFor="let forecast of forecastData">
-              <p><strong>Time:</strong> {{ forecast.dt_txt | date: 'shortTime' }}</p>
-              <p><strong>Temperature:</strong> {{ forecast.main.temp || 'N/A' }}°{{ temperatureUnit }}</p>
-              <p><strong>Weather:</strong> {{ forecast.weather[0].description }}</p>
-            </ion-list>
-          </ion-accordion>
-        </ion-accordion-group>
-      </ion-card>
-
-
-
       </ion-col>
     </ion-row>
 
     <ion-row>
-      <ion-col size="2" *ngFor="let forecast of forecastData">
+      <ion-col size="12">
+        <ion-card>
+          <ion-accordion-group>
+            <ion-accordion>
+              <ion-item slot="header">
+                <ion-label>Hourly Forecast</ion-label>
+              </ion-item>
+              <ion-list slot="content" *ngFor="let forecast of forecastData">
+                <p><strong>Time:</strong> {{ forecast.dt_txt | date: 'shortTime' }}</p>
+                <p><strong>Temp:</strong> {{ forecast.main.temp || 'N/A' }}°{{ temperatureUnit }}</p>
+                <p><strong>Weather:</strong> {{ forecast.weather[0].description }}</p>
+              </ion-list>
+            </ion-accordion>
+          </ion-accordion-group>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="6" *ngFor="let forecast of forecastData">
         <ion-card>
           <ion-card-header>
             <ion-card-title>{{ forecast.dt_txt | date: 'EEE, MMM d' }}</ion-card-title>
           </ion-card-header>
           <ion-card-content>
-            <img [src]="'https://openweathermap.org/img/wn/'+forecast.weather[0].icon+'@2x.png'" alt="Weather Icon"/>
+            <img [src]="'https://openweathermap.org/img/wn/'+forecast.weather[0].icon+'@2x.png'" alt="Weather Icon" style="width: 50px; height: 50px;" />
             <p>{{ forecast.weather[0].description }}</p>
             <p>Temp: {{ forecast.main.temp || 'N/A' }}°{{ temperatureUnit }}</p>
             <p>Humidity: {{ forecast.main.humidity }}%</p>
-            <p>Wind Speed: {{ forecast.wind.speed }} m/s</p>
+            <p>Wind: {{ forecast.wind.speed }} m/s</p>
           </ion-card-content>
         </ion-card>
       </ion-col>
-      
     </ion-row>
-  </ion-grid>
 
+  </ion-grid>
 </ion-content>

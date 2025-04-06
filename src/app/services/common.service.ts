@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Geolocation } from '@capacitor/geolocation';
+import { DOCUMENT } from '@angular/common';
 
 const API_KEY = environment.API_KEY;
 const API_URL = environment.API_URL;
@@ -10,7 +11,14 @@ const API_URL = environment.API_URL;
   providedIn: 'root'
 })
 export class CommonService {
-  constructor(private http: HttpClient) {}
+  renderer: Renderer2;
+  constructor(
+    private http: HttpClient, 
+    private rendererFactory: RendererFactory2,
+    @Inject(DOCUMENT) private document: Document
+  ) {
+    this.renderer = this.rendererFactory.createRenderer(this.document, null);
+  }
 
   async getLocation() {
     try {
@@ -25,4 +33,13 @@ export class CommonService {
       throw error;
     }
   }
+
+  enableDark(){
+    this.renderer.addClass(this.document.body, 'dark');
+  }
+
+  enableLight() {
+    this.renderer.removeClass(this.document.body, 'dark'); // Fix typo here
+  }
+
 }

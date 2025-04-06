@@ -25,12 +25,13 @@ export class HomePage {
   forecastData: any[] = [];
   forecast: any;
   temperatureUnit: 'C' | 'F' = 'C'; // Default to Celsius
+  backgroundImage: string = '';
 
   constructor(
     public httpClient: HttpClient,
     private commonService: CommonService,
     private actionSheetCtrl: ActionSheetController,
-  ) {}
+  ) {}  
 
   async ngOnInit() {
     await this.loadSavedData(); // Load saved cityName, temperature unit, and other data
@@ -44,35 +45,18 @@ export class HomePage {
     } else {
       this.getCurrentWeather();
     }
-  }
-
-  async settingsSheet() {
-    const settingsSheet = await this.actionSheetCtrl.create({
-      header: 'Settings',
-      buttons: [
-        {
-          text: `Switch to ${this.temperatureUnit === 'C' ? 'Fahrenheit' : 'Celsius'}`,
-          handler: async () => {
-            this.temperatureUnit = this.temperatureUnit === 'C' ? 'F' : 'C';
-            await Preferences.set({ key: 'temperatureUnit', value: this.temperatureUnit });
-            console.log('Temperature unit switched to:', this.temperatureUnit);
-            this.loadData(); // Reload current weather data
-            this.loadForecast(); // Reload forecast data
-          },
-        },
-        {
-          text: 'Refresh',
-          handler: () => {
-            window.location.reload();
-          },
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel',
-        },
-      ],
-    });
-    await settingsSheet.present();
+  
+    const theme = await Preferences.get({ key: 'theme' });
+    console.log('Loaded theme from preferences:', theme.value); // Debug log
+    if (theme.value === 'dark') {
+      document.body.classList.add('dark');
+      this.enableDark();
+      this.backgroundImage = '../../assets/kuyakimDark.jpg';
+    } else {
+      document.body.classList.remove('dark');
+      this.enableLight();
+      this.backgroundImage = '../../assets/kuyakimDark.jpg';
+    }
   }
 
   convertTemperature(temp: number): number {
@@ -217,12 +201,6 @@ export class HomePage {
     }
   }
 
-  async saveDataToPreferences() {
-    await Preferences.set({ key: 'cityName', value: this.cityName });
-    await Preferences.set({ key: 'location', value: JSON.stringify(this.location) });
-    console.log('Data saved to preferences.');
-  }
-
   async onCityNameChange() {
     // Save the updated cityName to Preferences
     await Preferences.set({ key: 'cityName', value: this.cityName });
@@ -233,6 +211,12 @@ export class HomePage {
     this.loadForecast();
   }
 
+  async saveDataToPreferences() {
+    await Preferences.set({ key: 'cityName', value: this.cityName });
+    await Preferences.set({ key: 'location', value: JSON.stringify(this.location) });
+    console.log('Data saved to preferences.');
+  }
+
   async loadSavedData() {
     const cityName = await Preferences.get({ key: 'cityName' });
     if (cityName.value) {
@@ -240,4 +224,74 @@ export class HomePage {
       console.log('Loaded cityName from preferences:', this.cityName);
     }
   }
+
+  
+  async settingsSheet() {
+    const settingsSheet = await this.actionSheetCtrl.create({
+      header: 'Settings',
+      buttons: [
+        {
+          text: `Switch to ${document.body.classList.contains('dark') ? 'Light' : 'Dark'} Mode`,
+          handler: () => {
+            const isDarkMode = document.body.classList.toggle('dark');
+            console.log(`Switched to ${isDarkMode ? 'Dark' : 'Light'} Mode`);
+          },
+        },
+        {
+          text: `Switch to ${this.temperatureUnit === 'C' ? 'Fahrenheit' : 'Celsius'}`,
+          handler: async () => {
+            this.temperatureUnit = this.temperatureUnit === 'C' ? 'F' : 'C';
+            await Preferences.set({ key: 'temperatureUnit', value: this.temperatureUnit });
+            console.log('Temperature unit switched to:', this.temperatureUnit);
+            this.loadData(); // Reload current weather data
+            this.loadForecast(); // Reload forecast data
+          },
+        },
+        {
+          text: 'Refresh',
+          handler: () => {
+            window.location.reload();
+          },
+        },
+        {
+          text: 'Switch Theme',
+          handler: async () => {
+            this.toggleDarkMode();
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+        },
+      ],
+    });
+    await settingsSheet.present();
+  }
+
+  enableDark() {
+    this.commonService.enableDark();
+    console.log('🌑 Dark mode enabled.');
+  }
+  
+  enableLight() {
+    this.commonService.enableLight();
+    console.log('☀️ Light mode enabled.');
+  }
+  
+  async toggleDarkMode() {
+    const isDarkMode = document.body.classList.toggle('dark');
+    console.log('Dark mode toggled:', isDarkMode); // Debug log
+    console.log('Current body class list:', document.body.classList); // Debug log
+    if (isDarkMode) {
+      this.enableDark();
+      this.backgroundImage = '../../assets/kuyakimDark.jpg';
+      await Preferences.set({ key: 'theme', value: 'dark' });
+    } else {
+      this.enableLight();
+      this.backgroundImage = '../../assets/kuyakimLight.jpg';
+      await Preferences.set({ key: 'theme', value: 'light' });
+    }
+    console.log(`Switched to ${isDarkMode ? 'Dark' : 'Light'} Mode`);
+  }
+  
 }
