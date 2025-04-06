@@ -24,6 +24,7 @@ export class HomePage {
   location: any = {};
   forecastData: any[] = [];
   forecast: any;
+  temperatureUnit: 'C' | 'F' = 'C'; // Default to Celsius
 
   constructor(
     public httpClient: HttpClient,
@@ -32,24 +33,31 @@ export class HomePage {
   ) {}
 
   async ngOnInit() {
-    await this.loadSavedData(); // Load saved cityName and other data
+    await this.loadSavedData(); // Load saved cityName, temperature unit, and other data
+    const unit = await Preferences.get({ key: 'temperatureUnit' });
+    if (unit.value) {
+      this.temperatureUnit = unit.value as 'C' | 'F';
+    }
     if (this.cityName) {
-      this.loadData(); // Load weather data for the saved cityName
+      this.loadData();
       this.loadForecast();
     } else {
-      this.getCurrentWeather(); // Fetch current location if no cityName is saved
+      this.getCurrentWeather();
     }
   }
 
-  async settingsSheet(){
+  async settingsSheet() {
     const settingsSheet = await this.actionSheetCtrl.create({
       header: 'Settings',
       buttons: [
         {
-          text: 'Change Celsius to Fahrenheit',
-          handler: () => {
-            // this.getCurrentWeather();
-            console.log("Change Celsius to Fahrenheit");
+          text: `Switch to ${this.temperatureUnit === 'C' ? 'Fahrenheit' : 'Celsius'}`,
+          handler: async () => {
+            this.temperatureUnit = this.temperatureUnit === 'C' ? 'F' : 'C';
+            await Preferences.set({ key: 'temperatureUnit', value: this.temperatureUnit });
+            console.log('Temperature unit switched to:', this.temperatureUnit);
+            this.loadData(); // Reload current weather data
+            this.loadForecast(); // Reload forecast data
           },
         },
         {
@@ -67,20 +75,29 @@ export class HomePage {
     await settingsSheet.present();
   }
 
+  convertTemperature(temp: number): number {
+    if (this.temperatureUnit === 'F') {
+      return parseFloat(((temp * 9) / 5 + 32).toFixed(1)); // Convert Celsius to Fahrenheit and round to 1 decimal place
+    }
+    return parseFloat(temp.toFixed(1)); // Return Celsius rounded to 1 decimal place
+  }
+
   async loadHourlyForecast() {
     if (this.cityName) {
       this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
         next: async (results: any) => {
-          console.log('Forecast Data:', results);
+          console.log('Hourly Forecast Data:', results);
           await Preferences.set({
             key: 'hourlyForecast',
             value: JSON.stringify(results),
           });
           const today = new Date().toISOString().split('T')[0];
-          this.forecastData = results.list.filter((forecast: any) => {
-            const forecastDate = forecast.dt_txt.split(' ')[0];
-            return forecastDate === today;
-          });
+          this.forecastData = results.list
+            .filter((forecast: any) => forecast.dt_txt.split(' ')[0] === today)
+            .map((forecast: any) => {
+              forecast.main.temp = this.convertTemperature(forecast.main.temp - 273.15);
+              return forecast;
+            });
           console.log('Hourly Forecast for Today:', this.forecastData);
         },
         error: async (err) => {
@@ -90,10 +107,12 @@ export class HomePage {
             console.log('Using cached hourly forecast data:', JSON.parse(cachedData.value));
             const results = JSON.parse(cachedData.value);
             const today = new Date().toISOString().split('T')[0];
-            this.forecastData = results.list.filter((forecast: any) => {
-              const forecastDate = forecast.dt_txt.split(' ')[0];
-              return forecastDate === today;
-            });
+            this.forecastData = results.list
+              .filter((forecast: any) => forecast.dt_txt.split(' ')[0] === today)
+              .map((forecast: any) => {
+                forecast.main.temp = this.convertTemperature(forecast.main.temp - 273.15);
+                return forecast;
+              });
           }
         },
       });
@@ -132,9 +151,12 @@ export class HomePage {
             key: 'dailyForecast',
             value: JSON.stringify(results),
           });
-          this.forecastData = results.list.filter((forecast: any) => {
-            return forecast.dt_txt.includes('12:00:00');
-          });
+          this.forecastData = results.list
+            .filter((forecast: any) => forecast.dt_txt.includes('12:00:00'))
+            .map((forecast: any) => {
+              forecast.main.temp = this.convertTemperature(forecast.main.temp); // No need to subtract 273.15 as API already provides Celsius
+              return forecast;
+            });
           console.log('Daily Forecast:', this.forecastData);
         },
         error: async (err) => {
@@ -143,9 +165,12 @@ export class HomePage {
           if (cachedData.value) {
             console.log('Using cached daily forecast data:', JSON.parse(cachedData.value));
             const results = JSON.parse(cachedData.value);
-            this.forecastData = results.list.filter((forecast: any) => {
-              return forecast.dt_txt.includes('12:00:00');
-            });
+            this.forecastData = results.list
+              .filter((forecast: any) => forecast.dt_txt.includes('12:00:00'))
+              .map((forecast: any) => {
+                forecast.main.temp = this.convertTemperature(forecast.main.temp);
+                return forecast;
+              });
           }
         },
       });
@@ -159,7 +184,7 @@ export class HomePage {
       // Save the cityName to Preferences whenever it is updated
       await Preferences.set({ key: 'cityName', value: this.cityName });
 
-      this.httpClient.get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}`).subscribe({
+      this.httpClient.get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
         next: async (results: any) => {
           console.log(results);
           await Preferences.set({
@@ -167,11 +192,12 @@ export class HomePage {
             value: JSON.stringify(results),
           });
           this.weatherTemp = results;
+          this.weatherTemp.main.temp = this.convertTemperature(this.weatherTemp.main.temp); // No need to subtract 273.15 as API already provides Celsius
+          this.weatherTemp.main.temp_max = this.convertTemperature(this.weatherTemp.main.temp_max);
+          this.weatherTemp.main.temp_min = this.convertTemperature(this.weatherTemp.main.temp_min);
           this.weatherDetails = results.weather[0];
           this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@2x.png`;
           console.log('Weather Icon URL:', this.weatherIcon);
-          this.weatherTemp.main.temp_max = Math.round(this.weatherTemp.main.temp_max - 273.15);
-          this.weatherTemp.main.temp_min = Math.round(this.weatherTemp.main.temp_min - 273.15);
           await this.saveDataToPreferences(); // Save data after successful fetch
         },
         error: async (err) => {
