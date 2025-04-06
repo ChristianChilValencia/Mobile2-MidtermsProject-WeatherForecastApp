@@ -49,14 +49,22 @@ export class HomePage {
     const theme = await Preferences.get({ key: 'theme' });
     console.log('Loaded theme from preferences:', theme.value); // Debug log
     if (theme.value === 'dark') {
-      document.body.classList.add('dark');
-      this.enableDark();
-      this.backgroundImage = '../../assets/kuyakimDark.jpg'; // Update background for dark mode
+      this.applyDarkMode();
     } else {
-      document.body.classList.remove('dark');
-      this.enableLight();
-      this.backgroundImage = '../../assets/kuyakimLight.jpg'; // Update background for light mode
+      this.applyLightMode();
     }
+  }
+
+  applyDarkMode() {
+    document.body.classList.add('dark');
+    this.enableDark();
+    this.backgroundImage = '../../assets/kuyakimDark.jpg'; // Update background for dark mode
+  }
+
+  applyLightMode() {
+    document.body.classList.remove('dark');
+    this.enableLight();
+    this.backgroundImage = '../../assets/kuyakimLight.jpg'; // Update background for light mode
   }
 
   convertTemperature(temp: number): number {
@@ -246,18 +254,15 @@ export class HomePage {
   }
   
   async toggleDarkMode() {
-    const isDarkMode = document.body.classList.toggle('dark');
-    console.log('Dark mode toggled:', isDarkMode); // Debug log
+    const isDarkMode = document.body.classList.contains('dark');
     if (isDarkMode) {
-      this.enableDark();
-      this.backgroundImage = '../../assets/kuyakimDark.jpg';
-      await Preferences.set({ key: 'theme', value: 'dark' }); // Persist dark mode preference
-    } else {
-      this.enableLight();
-      this.backgroundImage = '../../assets/kuyakimLight.jpg';
+      this.applyLightMode();
       await Preferences.set({ key: 'theme', value: 'light' }); // Persist light mode preference
+    } else {
+      this.applyDarkMode();
+      await Preferences.set({ key: 'theme', value: 'dark' }); // Persist dark mode preference
     }
-    console.log(`Switched to ${isDarkMode ? 'Dark' : 'Light'} Mode`);
+    console.log(`Switched to ${isDarkMode ? 'Light' : 'Dark'} Mode`);
   }
   
 }
