@@ -6,8 +6,18 @@ ion-item {
   color: var(--ion-text-color); /* Use the text color variable */
 }
 
-p, span {
+p, span{
   color: var(--ion-text-color); /* Ensure paragraphs and spans also use the text color */
+}
+
+ion-action-sheet {
+  --background: var(--ion-action-sheet-background, #000000); /* Default to white */
+  --color: var(--ion-action-sheet-color, #ffffff); /* Default to black */
+}
+
+ion-action-sheet-button {
+  --color: var(--ion-action-sheet-color, #000000); /* Default to black */
+  --icon-color: var(--ion-action-sheet-icon-color, #000000); /* Default to black */
 }
 
 ion-card {

@@ -86,12 +86,18 @@ export class HomePage {
             key: 'dailyForecast',
             value: JSON.stringify(results),
           });
+  
+          // Filter and map forecast data
           this.forecastData = results.list
             .filter((forecast: any) => forecast.dt_txt.includes('12:00:00'))
             .map((forecast: any) => {
-              forecast.main.temp = this.convertTemperature(forecast.main.temp); // No need to subtract 273.15 as API already provides Celsius
+              // Convert temperatures to the selected unit
+              forecast.main.temp = this.convertTemperature(forecast.main.temp);
+              forecast.main.temp_max = this.convertTemperature(forecast.main.temp_max);
+              forecast.main.temp_min = this.convertTemperature(forecast.main.temp_min);
               return forecast;
             });
+  
           console.log('Daily Forecast:', this.forecastData);
         },
         error: async (err) => {
@@ -100,10 +106,14 @@ export class HomePage {
           if (cachedData.value) {
             console.log('Using cached daily forecast data:', JSON.parse(cachedData.value));
             const results = JSON.parse(cachedData.value);
+  
+            // Filter and map cached forecast data
             this.forecastData = results.list
               .filter((forecast: any) => forecast.dt_txt.includes('12:00:00'))
               .map((forecast: any) => {
                 forecast.main.temp = this.convertTemperature(forecast.main.temp);
+                forecast.main.temp_max = this.convertTemperature(forecast.main.temp_max);
+                forecast.main.temp_min = this.convertTemperature(forecast.main.temp_min);
                 return forecast;
               });
           }
@@ -182,38 +192,41 @@ export class HomePage {
     const settingsSheet = await this.actionSheetCtrl.create({
       header: 'Settings',
       buttons: [
-
-        {
-          text: `Switch to ${this.temperatureUnit === 'C' ? 'Fahrenheit' : 'Celsius'}`,
-          handler: async () => {
-            this.temperatureUnit = this.temperatureUnit === 'C' ? 'F' : 'C';
-            await Preferences.set({ key: 'temperatureUnit', value: this.temperatureUnit });
-            console.log('Temperature unit switched to:', this.temperatureUnit);
-            this.loadData(); // Reload current weather data
-            // this.loadForecast(); // Reload forecast data
-          },
+      {
+        text: `Switch to ${this.temperatureUnit === 'C' ? 'Fahrenheit' : 'Celsius'}`,
+        icon: this.temperatureUnit === 'C' ? 'thermometer-outline' : 'thermometer',
+        handler: async () => {
+        this.temperatureUnit = this.temperatureUnit === 'C' ? 'F' : 'C';
+        await Preferences.set({ key: 'temperatureUnit', value: this.temperatureUnit });
+        console.log('Temperature unit switched to:', this.temperatureUnit);
+        this.loadData(); // Reload current weather data
+        this.loadForecast(); // Reload forecast data
         },
-        {
-          text: 'Refresh',
-          handler: () => {
-            window.location.reload();
-          },
+      },
+      {
+        text: 'Switch Theme',
+        icon: 'color-palette-outline',
+        handler: async () => {
+        const currentTheme = await Preferences.get({ key: 'theme' });
+        if (currentTheme.value === 'dark') {
+          this.commonService.enableLight(); 
+        } else {
+          this.commonService.enableDark(); 
+        }
         },
-        {
-          text: 'Switch Theme',
-          handler: async () => {
-            const currentTheme = await Preferences.get({ key: 'theme' });
-            if (currentTheme.value === 'dark') {
-              this.commonService.enableLight(); 
-            } else {
-              this.commonService.enableDark(); 
-            }
-          }
+      },
+      {
+        text: 'Refresh',
+        icon: 'refresh-outline',
+        handler: () => {
+        window.location.reload();
         },
-        {
-          text: 'Cancel',
-          role: 'cancel',
-        },
+      },
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        icon: 'close-outline',
+      },
       ],
     });
     await settingsSheet.present();

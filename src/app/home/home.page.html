@@ -50,36 +50,33 @@
       </ion-col>
     </ion-row>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Hourly Forecast for Today</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-        <ion-label *ngFor="let forecast of forecastData">
-            <ion-title>{{ forecast.dt_txt | date: 'shortTime' }} <br>
-              Temp: {{ forecast.main.temp }}°{{ temperatureUnit }} <br>
-              Weather: {{ forecast.weather[0].description }}</ion-title><br>
-        </ion-label>
-    </ion-card-content>
-  </ion-card>
-
-
     <ion-row>
-      <ion-col size="6" *ngFor="let forecast of forecastData">
+      <ion-col size="12">
         <ion-card>
-          <ion-card-header>
-            <ion-card-title>{{ forecast.dt_txt | date: 'EEE, MMM d' }}</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <img [src]="'https://openweathermap.org/img/wn/'+forecast.weather[0].icon+'@2x.png'" alt="Weather Icon" style="width: 50px; height: 50px;" />
-            <p>{{ forecast.weather[0].description }}</p>
-            <p>Temp: {{ forecast.main.temp || 'N/A' }}°{{ temperatureUnit }}</p>
-            <p>Humidity: {{ forecast.main.humidity }}%</p>
-            <p>Wind: {{ forecast.wind.speed }} m/s</p>
+          <ion-card-content style="text-align: center;">
+            <ion-title>5 Day Weather Forecast</ion-title>
           </ion-card-content>
+          <ion-row>
+            <ion-col size="6" *ngFor="let forecast of forecastData">
+              <ion-card>
+                <ion-card-header>
+                  <ion-card-title>{{ forecast.dt_txt | date: 'EEE, MMM d' }}</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <img [src]="'https://openweathermap.org/img/wn/'+forecast.weather[0].icon+'@2x.png'" alt="Weather Icon" style="width: 50px; height: 50px;" />
+                  <p>{{ forecast.weather[0].description }}</p>
+                  <p>Temp: {{ forecast.main?.temp || 'N/A' }}°{{ temperatureUnit }}</p>
+                  <p>Humidity: {{ forecast.main.humidity }}%</p>
+                  <p>Wind: {{ forecast.wind.speed }} m/s</p>
+                </ion-card-content>
+              </ion-card>
+            </ion-col>
+          </ion-row>
         </ion-card>
       </ion-col>
     </ion-row>
+
+
 
 
   </ion-grid>
@@ -94,7 +91,7 @@
       </ion-card>
     </ion-col>
   </ion-row>
-      
+
 </ion-content>
 
 <ion-footer>
