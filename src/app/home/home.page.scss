@@ -19,6 +19,7 @@ ion-card {
 }
 
 .background-image {
+  background: url('/assets/kuyakimLight.jpg'); /* Corrected path to the assets folder */
   position: fixed; /* Change to fixed to keep it in place */
   top: 0;
   left: 0;
