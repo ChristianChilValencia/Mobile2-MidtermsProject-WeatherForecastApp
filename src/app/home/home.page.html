@@ -5,7 +5,10 @@
 </ion-header>
 
 <ion-content>
-  <div class="background-image"></div>
+  <div
+    class="background-image"
+    [style.backgroundImage]="'url(' + backgroundImage + ')'"
+  ></div>
   <div style="text-align: right;">
       <ion-card-content >
         <br><br><br><br><br><br>

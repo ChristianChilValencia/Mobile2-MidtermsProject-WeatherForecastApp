@@ -25,7 +25,7 @@ export class HomePage {
   forecastData: any[] = [];
   forecast: any;
   temperatureUnit: 'C' | 'F' = 'C'; // Default to Celsius
-  backgroundImage: string = '';
+  backgroundImage = 'assets/kuyakim.jpg'; 
 
   constructor(
     public httpClient: HttpClient,
@@ -53,18 +53,6 @@ export class HomePage {
     } else {
       this.applyLightMode();
     }
-  }
-
-  applyDarkMode() {
-    document.body.classList.add('dark');
-    this.enableDark();
-    this.backgroundImage = '../../assets/kuyakimDark.jpg'; // Update background for dark mode
-  }
-
-  applyLightMode() {
-    document.body.classList.remove('dark');
-    this.enableLight();
-    this.backgroundImage = '../../assets/kuyakimLight.jpg'; // Update background for light mode
   }
 
   convertTemperature(temp: number): number {
@@ -205,13 +193,7 @@ export class HomePage {
     const settingsSheet = await this.actionSheetCtrl.create({
       header: 'Settings',
       buttons: [
-        {
-          text: `Switch to ${document.body.classList.contains('dark') ? 'Light' : 'Dark'} Mode`,
-          handler: () => {
-            const isDarkMode = document.body.classList.toggle('dark');
-            console.log(`Switched to ${isDarkMode ? 'Dark' : 'Light'} Mode`);
-          },
-        },
+
         {
           text: `Switch to ${this.temperatureUnit === 'C' ? 'Fahrenheit' : 'Celsius'}`,
           handler: async () => {
@@ -242,27 +224,32 @@ export class HomePage {
     });
     await settingsSheet.present();
   }
-
-  enableDark() {
-    this.commonService.enableDark();
-    console.log('🌑 Dark mode enabled.');
-  }
   
-  enableLight() {
+  applyDarkMode() {
+    // document.body.classList.add('dark');
+    this.commonService.enableDark();
+    this.backgroundImage; // Update background for dark mode
+  }
+
+  applyLightMode() {
+    // document.body.classList.remove('dark');
     this.commonService.enableLight();
-    console.log('☀️ Light mode enabled.');
+    this.backgroundImage; // Update background for light mode
   }
   
   async toggleDarkMode() {
     const isDarkMode = document.body.classList.contains('dark');
+    const backgroundImage = 'assets/kuyakim.jpg'; // Update background for light mode
+
     if (isDarkMode) {
       this.applyLightMode();
+      this.backgroundImage = backgroundImage; // Update background for light mode
       await Preferences.set({ key: 'theme', value: 'light' }); // Persist light mode preference
     } else {
       this.applyDarkMode();
       await Preferences.set({ key: 'theme', value: 'dark' }); // Persist dark mode preference
     }
-    console.log(`Switched to ${isDarkMode ? 'Light' : 'Dark'} Mode`);
   }
   
 }
+
