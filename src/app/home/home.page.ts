@@ -34,6 +34,7 @@ export class HomePage {
   ) {}  
 
   async ngOnInit() {
+    await this.commonService.applySavedTheme();
     await this.loadSavedData(); // Load saved cityName, temperature unit, and other data
     const unit = await Preferences.get({ key: 'temperatureUnit' });
     if (unit.value) {
@@ -41,17 +42,9 @@ export class HomePage {
     }
     if (this.cityName) {
       this.loadData();
+      this.loadForecast(); // Load forecast data if cityName is available
     } else {
       this.getCurrentWeather();
-    }
-  
-    // Apply the saved theme preference
-    const theme = await Preferences.get({ key: 'theme' });
-    console.log('Loaded theme from preferences:', theme.value); // Debug log
-    if (theme.value === 'dark') {
-      this.applyDarkMode();
-    } else {
-      this.applyLightMode();
     }
   }
 
@@ -83,53 +76,18 @@ export class HomePage {
     });
   }
 
-// async loadForecast() {
-//   if (this.cityName) {
-//     this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
-//       next: async (results: any) => {
-//         console.log('Forecast Data:', results);
-//         await Preferences.set({
-//           key: 'dailyForecast',
-//           value: JSON.stringify(results),
-//         });
-
-//         const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-//         this.forecastData = results.list.filter((forecast: any) => {
-//           const forecastDate = forecast.dt_txt.split(' ')[0]; // Extract date from forecast timestamp
-//           return forecastDate === today; // Include only today's forecasts
-//         }).map((forecast: any) => {
-//           forecast.main.temp = this.convertTemperature(forecast.main.temp);
-//           return forecast;
-//         });
-
-//         console.log('Hourly Forecast for Today:', this.forecastData);
-//       },
-//       error: async (err) => {
-//         console.error('Error fetching daily forecast data:', err);
-//         const cachedData = await Preferences.get({ key: 'dailyForecast' });
-//         if (cachedData.value) {
-//           console.log('Using cached daily forecast data:', JSON.parse(cachedData.value));
-//           const results = JSON.parse(cachedData.value);
-//           const today = new Date().toISOString().split('T')[0];
-//           this.forecastData = results.list.filter((forecast: any) => {
-//             const forecastDate = forecast.dt_txt.split(' ')[0];
-//             return forecastDate === today;
-//           }).map((forecast: any) => {
-//             forecast.main.temp = this.convertTemperature(forecast.main.temp);
-//             return forecast;
-//           });
-//         }
-//       },
-//     });
-//   } else {
-//     console.error('No city name available to load forecast!');
-//   }
-// }
-
   async loadData() {
     if (this.cityName) {
-      // Save the cityName to Preferences whenever it is updated
-      await Preferences.set({ key: 'cityName', value: this.cityName });
+      await Preferences.set({
+      key: 'currentWeather',
+      value: JSON.stringify(this.weatherTemp),
+      });
+
+      // Save forecast data to Preferences (if implemented)
+      // await Preferences.set({
+      // key: 'dailyForecast',
+      // value: JSON.stringify(forecastResults),
+      // });
 
       this.httpClient.get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
         next: async (results: any) => {
@@ -165,15 +123,13 @@ export class HomePage {
   }
 
   async onCityNameChange() {
-    // Save the updated cityName to Preferences
     await Preferences.set({ key: 'cityName', value: this.cityName });
     console.log('City name saved to preferences:', this.cityName);
-
-    // Load weather data and forecast for the updated cityName
     this.loadData();
-    // this.loadForecast();
   }
 
+
+  // PERSISTANCE CACHING 
   async saveDataToPreferences() {
     await Preferences.set({ key: 'cityName', value: this.cityName });
     await Preferences.set({ key: 'location', value: JSON.stringify(this.location) });
@@ -188,7 +144,8 @@ export class HomePage {
     }
   }
 
-  
+
+  // ACTION SHEETS ✅✅✅  
   async settingsSheet() {
     const settingsSheet = await this.actionSheetCtrl.create({
       header: 'Settings',
@@ -213,7 +170,12 @@ export class HomePage {
         {
           text: 'Switch Theme',
           handler: async () => {
-            this.toggleDarkMode();
+            const currentTheme = await Preferences.get({ key: 'theme' });
+            if (currentTheme.value === 'dark') {
+              this.commonService.enableLight(); 
+            } else {
+              this.commonService.enableDark(); 
+            }
           }
         },
         {
@@ -224,32 +186,70 @@ export class HomePage {
     });
     await settingsSheet.present();
   }
+
   
-  applyDarkMode() {
-    // document.body.classList.add('dark');
-    this.commonService.enableDark();
-    this.backgroundImage; // Update background for dark mode
+
+
+
+
+
+
+
+
+
+  // new code for forecast data
+  async forecastCurrentDate() {
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Start at 12:00 AM
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999)); // End at 11:59 PM
+  
+    this.forecastData = this.forecastData.filter((forecast: any) => {
+      const forecastDate = new Date(forecast.dt_txt);
+      return forecastDate >= startOfDay && forecastDate <= endOfDay;
+    }).map((forecast: any) => {
+      // Convert the temperature to the selected unit
+      forecast.main.temp = this.convertTemperature(forecast.main.temp);
+      forecast.main.temp_max = this.convertTemperature(forecast.main.temp_max);
+      forecast.main.temp_min = this.convertTemperature(forecast.main.temp_min);
+      return forecast;
+    });
+  
+    console.log('Filtered hourly forecast for today with converted temperatures:', this.forecastData);
   }
 
-  applyLightMode() {
-    // document.body.classList.remove('dark');
-    this.commonService.enableLight();
-    this.backgroundImage; // Update background for light mode
-  }
+  async loadForecast() {
+    if (this.cityName) {
+      this.httpClient.get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
+        next: async (results: any) => {
+          console.log('Forecast Data:', results);
+          this.forecastData = results.list.map((forecast: any) => {
+            forecast.main.temp = this.convertTemperature(forecast.main.temp);
+            return forecast;
+          });
   
-  async toggleDarkMode() {
-    const isDarkMode = document.body.classList.contains('dark');
-    const backgroundImage = 'assets/kuyakim.jpg'; // Update background for light mode
-
-    if (isDarkMode) {
-      this.applyLightMode();
-      this.backgroundImage = backgroundImage; // Update background for light mode
-      await Preferences.set({ key: 'theme', value: 'light' }); // Persist light mode preference
+          // Filter today's hourly forecast
+          await this.forecastCurrentDate();
+        },
+        error: (err) => {
+          console.error('Error fetching forecast data:', err);
+        },
+      });
     } else {
-      this.applyDarkMode();
-      await Preferences.set({ key: 'theme', value: 'dark' }); // Persist dark mode preference
+      console.error('No city name available to load forecast!');
     }
   }
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 

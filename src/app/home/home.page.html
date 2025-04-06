@@ -50,47 +50,19 @@
       </ion-col>
     </ion-row>
 
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Hourly Forecast for Today</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+        <ion-label *ngFor="let forecast of forecastData">
+            <ion-title>{{ forecast.dt_txt | date: 'shortTime' }} <br>
+              Temp: {{ forecast.main.temp }}°{{ temperatureUnit }} <br>
+              Weather: {{ forecast.weather[0].description }}</ion-title><br>
+        </ion-label>
+    </ion-card-content>
+  </ion-card>
 
-
-    <ion-row>
-      <ion-col size="12">
-        <ion-card>
-          <ion-accordion-group>
-            <ion-accordion>
-              <ion-item slot="header">
-                <ion-label>Hourly Forecast</ion-label>
-              </ion-item>
-              <ion-list slot="content" *ngFor="let forecast of forecastData">
-                <p><strong>Time:</strong> {{ forecast.dt_txt | date: 'shortTime' }}</p>
-                <p><strong>Temp:</strong> {{ forecast.main.temp || 'N/A' }}°{{ temperatureUnit }}</p>
-                <p><strong>Weather:</strong> {{ forecast.weather[0].description }}</p>
-              </ion-list>
-            </ion-accordion>
-          </ion-accordion-group>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-
-    <ion-row>
-      <ion-col size="12">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Hourly Updates for Today</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-list>
-              <ion-item *ngFor="let forecast of forecastData">
-                <ion-label>
-                  <h3>{{ forecast.dt_txt | date: 'shortTime' }}</h3>
-                  <p>Temp: {{ forecast.main.temp }}°{{ temperatureUnit }}</p>
-                  <p>Weather: {{ forecast.weather[0].description }}</p>
-                </ion-label>
-              </ion-item>
-            </ion-list>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
 
     <ion-row>
       <ion-col size="6" *ngFor="let forecast of forecastData">
@@ -122,6 +94,7 @@
       </ion-card>
     </ion-col>
   </ion-row>
+
 </ion-content>
 
 <ion-footer>
