@@ -9,7 +9,7 @@
     class="background-image"
     [style.backgroundImage]="'url(' + backgroundImage + ')'"
   ></div>
-  <div style="text-align: right;">
+  <div class="city-weather">
     <!-- WEATHER SA CITY -->
     <ion-card-content >
       <br><br><br><br><br><br>
@@ -24,7 +24,7 @@
     <ion-row>
       <ion-col size="12">
         <ion-card>
-          <ion-card-header style="text-align: center;">
+          <ion-card-header class="center">
             <ion-card-title>{{ weatherTemp?.main?.temp || 'N/A' }}°{{ temperatureUnit }}</ion-card-title>
             <ion-card-subtitle>Temperature</ion-card-subtitle>
           </ion-card-header>
@@ -33,7 +33,7 @@
 
       <ion-col size="6">
         <ion-card>
-          <ion-card-header style="text-align: center;">
+          <ion-card-header class="center">
             <ion-card-title>{{ weatherTemp?.main?.humidity || 'N/A' }}%</ion-card-title>
             <ion-card-subtitle>Humidity</ion-card-subtitle>
           </ion-card-header>
@@ -42,7 +42,7 @@
 
       <ion-col size="6">
         <ion-card>
-          <ion-card-header style="text-align: center;">
+          <ion-card-header class="center">
             <ion-card-title>{{ weatherTemp?.wind?.speed || 'N/A' }} m/s</ion-card-title>
             <ion-card-subtitle>Wind Speed</ion-card-subtitle>
           </ion-card-header>
@@ -54,7 +54,7 @@
     <ion-row>
       <ion-col size="12">
         <ion-card>
-          <ion-card-content style="text-align: center;">
+          <ion-card-content class="center">
             <ion-title>5 Day Weather Forecast</ion-title>
           </ion-card-content>
           <ion-row>
@@ -82,7 +82,7 @@
   <ion-row>
     <ion-col size="12">
       <ion-card>
-        <ion-card-content style="text-align: center;">
+        <ion-card-content class="center">
           <ion-card-subtitle>"Ang buhay ay weather-weather lang" - Kuya Kim</ion-card-subtitle>
         </ion-card-content>
       </ion-card>
