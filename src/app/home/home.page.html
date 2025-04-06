@@ -10,14 +10,14 @@
     [style.backgroundImage]="'url(' + backgroundImage + ')'"
   ></div>
   <div style="text-align: right;">
-      <ion-card-content >
-        <br><br><br><br><br><br>
-        <img [src]="weatherIcon" alt="Weather Icon" style="width: 170px; height: 170px;" />
-        <ion-card-title>{{ weatherDetails?.description }}</ion-card-title>
-        <ion-card-title>{{ todayDate | date: "EEE dd MMM" }}</ion-card-title>
-        <ion-card-title>{{ cityName || 'City' }}</ion-card-title>
-
-      </ion-card-content>
+    <!-- WEATHER SA CITY -->
+    <ion-card-content >
+      <br><br><br><br><br><br>
+      <img [src]="weatherIcon" alt="Weather Icon" style="width: 170px; height: 170px;" />
+      <ion-card-title>{{ weatherDetails?.description }}</ion-card-title>
+      <ion-card-title>{{ todayDate | date: "EEE dd MMM" }}</ion-card-title>
+      <ion-card-title>{{ cityName || 'City' }}</ion-card-title>
+    </ion-card-content>
   </div>
 
   <ion-grid>
@@ -50,6 +50,7 @@
       </ion-col>
     </ion-row>
 
+    <!-- 5 DAY WEATHER FORECASTING -->
     <ion-row>
       <ion-col size="12">
         <ion-card>
@@ -75,10 +76,6 @@
         </ion-card>
       </ion-col>
     </ion-row>
-
-
-
-
   </ion-grid>
 
   <!-- QUOTE LANG NI IDOL KUYA KIM -->
@@ -94,11 +91,14 @@
 
 </ion-content>
 
+
 <ion-footer>
+  <!-- PANG SEARCH -->
   <ion-toolbar>
     <ion-searchbar animated [(ngModel)]="cityName" placeholder="Enter city name" (ionInput)="onCityNameChange()"></ion-searchbar>
   </ion-toolbar>
 
+  <!-- CURRENT WEATHER OG SETTINGS PANG CUSTOMIZE -->
   <ion-toolbar>
     <ion-grid>
       <ion-row>

@@ -12,6 +12,7 @@ const API_URL = environment.API_URL;
   providedIn: 'root'
 })
 export class CommonService {
+  // RENDERING PARA THEMES
   renderer: Renderer2;
   constructor(
     private http: HttpClient, 
@@ -21,6 +22,7 @@ export class CommonService {
     this.renderer = this.rendererFactory.createRenderer(this.document, null);
   }
 
+  // KUHAG LOCATION 
   async getLocation() {
     try {
       const position = await Geolocation.getCurrentPosition();
@@ -32,17 +34,19 @@ export class CommonService {
     }
   }
 
+
+  // PA DARK OG LIGHT MODE
   enableDark() {
     this.renderer.addClass(this.document.body, 'dark');
-    Preferences.set({ key: 'theme', value: 'dark' }); // Persist dark mode preference
-  }
-  
-  enableLight() {
-    this.renderer.removeClass(this.document.body, 'dark');
-    Preferences.set({ key: 'theme', value: 'light' }); // Persist light mode preference
+    Preferences.set({ key: 'theme', value: 'dark' }); 
   }
 
-  
+  enableLight() {
+    this.renderer.removeClass(this.document.body, 'dark');
+    Preferences.set({ key: 'theme', value: 'light' });
+  }
+
+  //APPLYUN ANG THEME
   async applySavedTheme() {
     const theme = await Preferences.get({ key: 'theme' });
     if (theme.value === 'dark') {
@@ -52,44 +56,36 @@ export class CommonService {
     }
   }
 
-    // Enable notifications for severe weather alerts
-    async enableNotifications() {
-      await Preferences.set({ key: 'notificationsEnabled', value: 'true' });
-      console.log('Notifications for severe weather alerts enabled.');
-    }
-  
-    // Disable notifications for severe weather alerts
-    async disableNotifications() {
-      await Preferences.set({ key: 'notificationsEnabled', value: 'false' });
-      console.log('Notifications for severe weather alerts disabled.');
-    }
-  
-    // Check if notifications are enabled
-    async areNotificationsEnabled(): Promise<boolean> {
-      const { value } = await Preferences.get({ key: 'notificationsEnabled' });
-      return value === 'true';
-    }
+  // PANG NOTIFICATION
+  async enableNotifications() {
+    await Preferences.set({ key: 'notificationsEnabled', value: 'true' });
+    console.log('Notifications for severe weather alerts enabled.');
+  }
 
-    async checkForSevereWeatherAlerts() {
-      const notificationsEnabled = await this.commonService.areNotificationsEnabled();
-      if (!notificationsEnabled) {
-        console.log('Notifications are disabled. Skipping severe weather alerts.');
-        return;
-      }
-    
-      // Logic to fetch and display severe weather alerts
-      this.httpClient.get(`${API_URL}/alerts?q=${this.cityName}&appid=${API_KEY}`).subscribe({
-        next: (alerts: any) => {
-          if (alerts && alerts.length > 0) {
-            console.log('Severe weather alerts:', alerts);
-            // Display alerts to the user (e.g., using a toast or modal)
-          } else {
-            console.log('No severe weather alerts.');
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching severe weather alerts:', err);
-        },
+  async disableNotifications() {
+    await Preferences.set({ key: 'notificationsEnabled', value: 'false' });
+    console.log('Notifications for severe weather alerts disabled.');
+  }
+
+  // CHECK IF ENABLED ANG NOTIF
+  async areNotificationsEnabled(): Promise<boolean> {
+    const { value } = await Preferences.get({ key: 'notificationsEnabled' });
+    return value === 'true';
+  }
+
+  // PAKITA ALERT SA NOTIFICATION
+  async showNotification() {
+    const notificationsEnabled = await this.areNotificationsEnabled();
+    if (notificationsEnabled) {
+      const notification = new Notification('Weather Alert', {
+        body: 'Severe weather conditions detected in your area. Stay safe!',
+        icon: 'alert-circle-outline'
       });
+      notification.onclick = () => {
+        console.log('Notification clicked!');
+      };
+    } else {
+      console.log('Notifications are disabled.');
     }
+  }
 }

@@ -23,7 +23,6 @@ export class HomePage {
   cityName: string = '';
   location: any = {};
   forecastData: any[] = [];
-  forecast: any;
   temperatureUnit: 'C' | 'F' = 'C';
   backgroundImage = 'assets/kuyakim.jpg'; 
 
@@ -47,14 +46,6 @@ export class HomePage {
       this.getCurrentWeather();
     }
   }
-
-  convertTemperature(temp: number): number {
-    if (this.temperatureUnit === 'F') {
-      return parseFloat(((temp * 9) / 5 + 32).toFixed(1)); 
-    }
-    return parseFloat(temp.toFixed(1));
-  }
-
 
   async getCurrentWeather() {
     console.log("Fetching current location...");
@@ -126,7 +117,6 @@ export class HomePage {
 
   async loadData() {
     if (this.cityName) {
-      // Save the cityName to Preferences whenever it is updated
       await Preferences.set({ key: 'cityName', value: this.cityName });
 
       this.httpClient.get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}&units=metric`).subscribe({
@@ -162,32 +152,63 @@ export class HomePage {
     }
   }
 
-
   async onCityNameChange() {
-    await Preferences.set({ key: 'cityName', value: this.cityName });
-    console.log('City name saved to preferences:', this.cityName);
-    this.loadData();
-    this.loadForecast(); 
-  }
-
-
-  // PERSISTANCE CACHING 
-  async saveDataToPreferences() {
-    await Preferences.set({ key: 'cityName', value: this.cityName });
-    await Preferences.set({ key: 'location', value: JSON.stringify(this.location) });
-    console.log('Data saved to preferences.');
-  }
-
-  async loadSavedData() {
-    const cityName = await Preferences.get({ key: 'cityName' });
-    if (cityName.value) {
-      this.cityName = cityName.value;
-      console.log('Loaded cityName from preferences:', this.cityName);
+    if (!this.cityName || this.cityName.trim() === '') {
+      const savedCityName = await Preferences.get({ key: 'cityName' });
+      if (savedCityName.value) {
+        this.cityName = savedCityName.value;
+      }
+    } else {
+      await Preferences.set({ key: 'cityName', value: this.cityName });
+      this.loadData();
+      this.loadForecast();
     }
   }
 
+  convertTemperature(temp: number): number {
+    if (this.temperatureUnit === 'F') {
+      return parseFloat(((temp * 9) / 5 + 32).toFixed(1)); 
+    }
+    return parseFloat(temp.toFixed(1));
+  }
 
-  // ACTION SHEETS ✅✅✅  
+  async checkForSevereWeatherAlerts() {
+    const notificationsEnabled = await this.commonService.areNotificationsEnabled();
+    if (!notificationsEnabled) {
+      console.log('Notifications are disabled. Skipping severe weather alerts.');
+      return;
+    }
+
+    this.httpClient.get(`${API_URL}/alerts?q=${this.cityName}&appid=${API_KEY}`).subscribe({
+      next: (alerts: any) => {
+        if (alerts && alerts.length > 0) {
+          this.commonService.showNotification();
+        } else {
+          console.log('No severe weather alerts.');
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching severe weather alerts:', err);
+      },
+    });
+  }
+
+    // PERSISTANCE SAVING
+    async saveDataToPreferences() {
+      await Preferences.set({ key: 'cityName', value: this.cityName });
+      await Preferences.set({ key: 'location', value: JSON.stringify(this.location) });
+      console.log('Data saved to preferences.');
+    }
+  
+    async loadSavedData() {
+      const cityName = await Preferences.get({ key: 'cityName' });
+      if (cityName.value) {
+        this.cityName = cityName.value;
+        console.log('Loaded cityName from preferences:', this.cityName);
+      }
+    }
+
+  // ACTION SHEETS PARA SA SETTINGS
   async settingsSheet() {
     const notificationsEnabled = await this.commonService.areNotificationsEnabled();
 
@@ -212,8 +233,8 @@ export class HomePage {
         this.temperatureUnit = this.temperatureUnit === 'C' ? 'F' : 'C';
         await Preferences.set({ key: 'temperatureUnit', value: this.temperatureUnit });
         console.log('Temperature unit switched to:', this.temperatureUnit);
-        this.loadData(); // Reload current weather data
-        this.loadForecast(); // Reload forecast data
+        this.loadData(); 
+        this.loadForecast(); 
         },
       },
       {
@@ -243,29 +264,6 @@ export class HomePage {
       ],
     });
     await settingsSheet.present();
-  }
-
-  async checkForSevereWeatherAlerts() {
-    const notificationsEnabled = await this.commonService.areNotificationsEnabled();
-    if (!notificationsEnabled) {
-      console.log('Notifications are disabled. Skipping severe weather alerts.');
-      return;
-    }
-  
-    // Logic to fetch and display severe weather alerts
-    this.httpClient.get(`${API_URL}/alerts?q=${this.cityName}&appid=${API_KEY}`).subscribe({
-      next: (alerts: any) => {
-        if (alerts && alerts.length > 0) {
-          console.log('Severe weather alerts:', alerts);
-          // Display alerts to the user (e.g., using a toast or modal)
-        } else {
-          console.log('No severe weather alerts.');
-        }
-      },
-      error: (err) => {
-        console.error('Error fetching severe weather alerts:', err);
-      },
-    });
-  }
+  }    
 }
 
