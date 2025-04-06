@@ -75,3 +75,8 @@ src/environments/environment.ts
 # Secret
 src/environments/environment.ts
 .environment.ts
+
+src/environments/environment.prod.ts
+.environment.prod.ts
+
+src/environments
