@@ -16,7 +16,7 @@
       <img [src]="weatherIcon" alt="Weather Icon" style="width: 170px; height: 170px;" />
       <ion-card-title>{{ weatherDetails?.description }}</ion-card-title>
       <ion-card-title>{{ todayDate | date: "EEE dd MMM" }}</ion-card-title>
-      <ion-card-title>{{ cityName || 'City' }}</ion-card-title>
+      <ion-card-title>{{ cityName }}</ion-card-title>
     </ion-card-content>
   </div>
 
@@ -50,7 +50,6 @@
       </ion-col>
     </ion-row>
 
-   
     <!-- PANG HOURLY FORECAST NA PWEDE E SCROLL -->
     <ion-row>
       <ion-col size="12" class="center">
@@ -120,7 +119,8 @@
 <ion-footer>
   <!-- PANG SEARCH -->
   <ion-toolbar>
-    <ion-searchbar animated [(ngModel)]="cityName" placeholder="Enter city name" (ionInput)="onCityNameChange()"></ion-searchbar>
+    <ion-searchbar animated [(ngModel)]="cityName" placeholder="Enter city name" 
+      (ionInput)="onCityNameChange()" (keyup.enter)="searchCity()"></ion-searchbar>
   </ion-toolbar>
 
   <!-- CURRENT WEATHER OG SETTINGS PANG CUSTOMIZE -->

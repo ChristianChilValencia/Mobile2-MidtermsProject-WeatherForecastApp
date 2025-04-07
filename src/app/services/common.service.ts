@@ -34,6 +34,13 @@ export class CommonService {
     }
   }
 
+  async presentToast(message: string) {
+    const toast = document.createElement('ion-toast');
+    toast.message = message;
+    toast.duration = 2000;
+    document.body.appendChild(toast);
+    await toast.present();
+  }
 
   // PA DARK OG LIGHT MODE
   enableDark() {

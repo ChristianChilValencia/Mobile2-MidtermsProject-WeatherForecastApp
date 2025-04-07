@@ -13,19 +13,13 @@ dependencies {
     implementation project(':capacitor-geolocation')
     implementation project(':capacitor-haptics')
     implementation project(':capacitor-keyboard')
+    implementation project(':capacitor-network')
     implementation project(':capacitor-preferences')
     implementation project(':capacitor-status-bar')
-<<<<<<< HEAD
 
 }
 
 
-=======
-    implementation project(':capacitor-storage')
-
-}
-
->>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
 if (hasProperty('postBuildExtras')) {
   postBuildExtras()
 }
