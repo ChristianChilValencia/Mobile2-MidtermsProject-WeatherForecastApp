@@ -1,11 +1,5 @@
 {
-<<<<<<< HEAD
-  "name": "weatherApp",
-=======
-  "name": "WeatherForecastApp",
->>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
-  "integrations": {
-    "capacitor": {}
-  },
+  "name": "New Ionic App",
+  "integrations": {},
   "type": "angular"
 }
