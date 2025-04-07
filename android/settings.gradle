@@ -1,13 +1,5 @@
-<<<<<<< HEAD
 include ':app'
 include ':capacitor-cordova-android-plugins'
 project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
 
 apply from: 'capacitor.settings.gradle'
-=======
-include ':app', 'WeatherForecastApp'
-include ':capacitor-cordova-android-plugins'
-project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
-
-apply from: 'capacitor.settings.gradle'
->>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb

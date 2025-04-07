@@ -7,6 +7,7 @@ import { Preferences } from '@capacitor/preferences';
 import { Network } from '@capacitor/network';
 const API_KEY = environment.API_KEY;
 const API_URL = environment.API_URL;
+import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-home',
@@ -88,7 +89,6 @@ export class HomePage implements OnInit {
   }
 
 
-  // PANG FETCH DATA SA API
   async fetchData(endpoint: string, params: string): Promise<any> {
     if (!this.isOnline) {
       console.log(`Offline: Cannot fetch ${endpoint} data`);
@@ -213,7 +213,6 @@ export class HomePage implements OnInit {
   }
 
 
-  // PANG LOAD SA TANAN DATA OG FORECAST
   private async loadDataAndForecast(): Promise<void> {
     await this.checkNetworkStatus();
     
@@ -233,7 +232,7 @@ export class HomePage implements OnInit {
     }
   }
   
-
+  
   // PROCESS FORECAST
   private processForecastData(list: any[]): any[] {
     return list
@@ -254,13 +253,11 @@ export class HomePage implements OnInit {
 
   // SA CITY NAME RANI PARA DI MA WA 
   async onCityNameChange() {
-    if (!this.cityName.trim()) {
-      const savedCityName = await Preferences.get({ key: 'cityName' });
-      if (savedCityName.value) this.cityName = savedCityName.value;
-    } else {
+    // Don't restore the previous value when clearing - only save non-empty values
+    if (this.cityName.trim()) {
       await Preferences.set({ key: 'cityName', value: this.cityName });
-      // Remove automatic data loading here to prevent dynamic updates
     }
+    // Remove automatic data loading here to prevent dynamic updates
   }
 
 
@@ -404,6 +401,7 @@ export class HomePage implements OnInit {
           icon: 'exit-outline',
           handler: () => {
             window.close();
+            App.exitApp();
           },
         },
         {
