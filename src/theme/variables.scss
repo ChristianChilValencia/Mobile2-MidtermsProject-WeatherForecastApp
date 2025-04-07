@@ -20,11 +20,10 @@
   --ion-card-background: #ffffff; /* Card background */
   --ion-item-background: #ffffff; /* Item background */
   
-  --ion-action-sheet-background: #222428; /* Dark background for Action Sheet */
-  --ion-action-sheet-color: #ffffff; /* White text color for Action Sheet */
-  --ion-action-sheet-icon-color: #ffffff; /* White icon color for Action Sheet*/
-
-
+  /* Action sheet colors - BLUE for light mode */
+  --ion-action-sheet-background: #ffffff; /* Light background for Action Sheet */
+  --ion-action-sheet-color: #007bff; /* Blue text color for Action Sheet */
+  --ion-action-sheet-icon-color: #007bff; /* Blue icon color for Action Sheet */
 }
 
 /** Dark Mode Variables **/
@@ -36,19 +35,49 @@ body.dark {
   --ion-color-success: #2dd36f; /* Success color */
   --ion-color-warning: #ffc409; /* Warning color */
   --ion-color-danger: #eb445a; /* Danger color */
-  --ion-color-dark: #222428; /* Dark text color */
+  --ion-color-dark: #f4f5f8; /* Light text color for dark mode */
   --ion-color-medium: #92949c; /* Medium text color */
-  --ion-color-light: #f4f5f8; /* Light background color */
+  --ion-color-light: #222428; /* Dark background for dark mode */
 
-  --ion-background-color: #ffffff; /* Background color */
-  --ion-text-color: #000000; /* Text color */
+  /* Dark mode background and text colors */
+  --ion-background-color: #121212; /* Dark background color */
+  --ion-background-color-rgb: 18, 18, 18;
+  --ion-text-color: #ffffff; /* White text color */
+  --ion-text-color-rgb: 255, 255, 255;
 
-  --ion-toolbar-background: #f8f8f8; /* Toolbar background */
-  --ion-tab-bar-background: #f8f8f8; /* Tab bar background */
-  --ion-card-background: #ffffff; /* Card background */
-  --ion-item-background: #ffffff; /* Item background */
+  /* Dark mode UI elements */
+  --ion-toolbar-background: #1f1f1f; /* Dark toolbar background */
+  --ion-tab-bar-background: #1f1f1f; /* Dark tab bar background */
+  --ion-card-background: #1e1e1e; /* Dark card background */
+  --ion-item-background: #1e1e1e; /* Dark item background */
+  
+  /* Action sheet colors - WHITE for dark mode */
+  --ion-action-sheet-background: #333333; /* Dark background for Action Sheet */
+  --ion-action-sheet-color: #ffffff; /* White text color for Action Sheet in dark mode */
+  --ion-action-sheet-icon-color: #ffffff; /* White icon color for Action Sheet in dark mode */
+}
 
-  --ion-action-sheet-background: #ffffff; /* White background for Action Sheet */
-  --ion-action-sheet-color: #000000; /* Black text color for Action Sheet */
-  --ion-action-sheet-icon-color: #000000; /* Black icon color for Action Sheet */
+/* Additional dark mode styles to cover all edge cases */
+@media (prefers-color-scheme: dark) {
+  body:not(.light-theme) {
+    --ion-color-step-50: #0d0d0d;
+    --ion-color-step-100: #1a1a1a;
+    --ion-color-step-150: #262626;
+    --ion-color-step-200: #333333;
+    --ion-color-step-250: #404040;
+    --ion-color-step-300: #4d4d4d;
+    --ion-color-step-350: #595959;
+    --ion-color-step-400: #666666;
+    --ion-color-step-450: #737373;
+    --ion-color-step-500: #808080;
+    --ion-color-step-550: #8c8c8c;
+    --ion-color-step-600: #999999;
+    --ion-color-step-650: #a6a6a6;
+    --ion-color-step-700: #b3b3b3;
+    --ion-color-step-750: #bfbfbf;
+    --ion-color-step-800: #cccccc;
+    --ion-color-step-850: #d9d9d9;
+    --ion-color-step-900: #e6e6e6;
+    --ion-color-step-950: #f2f2f2;
   }
+}

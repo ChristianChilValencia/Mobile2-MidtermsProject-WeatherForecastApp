@@ -49,6 +49,7 @@ export class HomePage implements OnInit {
     });
   }
   
+  // MO CHECK NETWORK IF OFFLINE KA O DI
   async checkNetworkStatus() {
     const status = await Network.getStatus();
     this.isOnline = status.connected;
@@ -56,6 +57,8 @@ export class HomePage implements OnInit {
     return this.isOnline;
   }
   
+
+  // LOAD SIYA SA CACHE DATA PANG OFFLINE
   async loadCachedData() {
     console.log('Loading cached data due to offline status');
     
@@ -84,6 +87,8 @@ export class HomePage implements OnInit {
     this.hourlyForecastData = await loadFromCache('hourlyForecast') || [];
   }
 
+
+  // PANG FETCH DATA SA API
   async fetchData(endpoint: string, params: string): Promise<any> {
     if (!this.isOnline) {
       console.log(`Offline: Cannot fetch ${endpoint} data`);
@@ -112,6 +117,8 @@ export class HomePage implements OnInit {
     });
   }
 
+
+  //MO LOAD SA HOURLY FORECAST
   async loadHourlyForecast() {
     if (!this.cityName) {
       console.error('No city name available to load hourly forecast!');
@@ -138,6 +145,8 @@ export class HomePage implements OnInit {
     }
   }
 
+
+  // MO KUHA SA CURRENT WEATHER NIMU
   async getCurrentWeather() {
     if (!this.isOnline) {
       console.log('Offline: Cannot fetch current location');
@@ -162,6 +171,8 @@ export class HomePage implements OnInit {
     });
   }
 
+
+  //PANG LOAD SA FORECAST
   async loadForecast() {
     if (!this.cityName) {
       console.error('No city name available to load forecast!');
@@ -175,7 +186,9 @@ export class HomePage implements OnInit {
       this.forecastData = this.processForecastData(results.list);
     }
   }
-  
+
+
+  // PANG LOAD SA TANAN DATA
   async loadData(): Promise<void> {
     if (!this.cityName) {
       console.error('No city name available to load data!');
@@ -199,6 +212,8 @@ export class HomePage implements OnInit {
     }
   }
 
+
+  // PANG LOAD SA TANAN DATA OG FORECAST
   private async loadDataAndForecast(): Promise<void> {
     await this.checkNetworkStatus();
     
@@ -218,6 +233,7 @@ export class HomePage implements OnInit {
     }
   }
   
+
   // PROCESS FORECAST
   private processForecastData(list: any[]): any[] {
     return list
@@ -228,11 +244,13 @@ export class HomePage implements OnInit {
       });
   }
 
-  // PROCESS DATA
+
+  // PROCESS DATA SA WEATHER OG MA CONVERTED SHA
   private processWeatherData(results: any): any {
     results.main.temp = this.convertTemperature(results.main.temp);
     return results;
   }
+
 
   // SA CITY NAME RANI PARA DI MA WA 
   async onCityNameChange() {
@@ -245,6 +263,7 @@ export class HomePage implements OnInit {
     }
   }
 
+
   // CONVERT FARENHEIT O CELCIUS
   convertTemperature(temp: number): number {
     if (this.temperatureUnit === 'F') {
@@ -253,6 +272,7 @@ export class HomePage implements OnInit {
       return parseFloat(temp.toFixed(1));
     }
   }
+
 
   // MO CHECK WEATHER ALERTS
   async checkForSevereWeatherAlerts() {
@@ -270,12 +290,14 @@ export class HomePage implements OnInit {
     }
   }
 
+
   // PANG PREFERENCES NA MO SAVE TANAN
   async saveDataToPreferences() {
     await Preferences.set({ key: 'cityName', value: this.cityName });
     await Preferences.set({ key: 'location', value: JSON.stringify(this.location) });
     console.log('Data saved to preferences.');
   }
+
 
   // PARA IG ABRI MO LOAD SHA LAHUS
   async loadSavedData() {
@@ -286,17 +308,20 @@ export class HomePage implements OnInit {
     }
   }
 
-  // TANNA SETTINGS OG CUSTOMIZATION
+
+  // TANAN SETTINGS OG CUSTOMIZATION
   async settingsSheet() {
     const notificationsEnabled = await this.commonService.areNotificationsEnabled();
     await this.checkNetworkStatus();
 
     const settingsSheet = await this.actionSheetCtrl.create({
       header: 'Settings',
+      cssClass: 'custom-action-sheet',
       buttons: [
         {
           text: notificationsEnabled ? 'Disable Notifications' : 'Enable Notifications',
           icon: notificationsEnabled ? 'notifications-off-outline' : 'notifications-outline',
+          cssClass: 'blue-text',
           handler: async () => {
             notificationsEnabled
               ? await this.commonService.disableNotifications()
@@ -345,12 +370,15 @@ export class HomePage implements OnInit {
     await settingsSheet.present();
   }
 
+
+  // PARA IG SEARCH CITY 
   searchCity() {
     if (!this.cityName.trim()) {
       this.commonService.presentToast('Please enter a city name');
       return;
     }
     
+    // LOAD SA DATA OG FORECAST
     this.loadDataAndForecast().then(() => {
       if (this.weatherTemp) {
         this.displayedCityName = this.cityName;
@@ -358,9 +386,14 @@ export class HomePage implements OnInit {
     });
   }
 
+
+  // PARA RA SURE IG SEARCH BA
   get safeDisplayName(): string {
     return this.displayedCityName || this.cityName || '';
   }
+  
+
+  // FINALLY MO EXIT SA APP
   async exitApp() {
     const actionSheet = await this.actionSheetCtrl.create({
       header: 'Are you sure you want to exit?',
@@ -381,6 +414,7 @@ export class HomePage implements OnInit {
       ],
     });
     await actionSheet.present();
+
   }
 
 }

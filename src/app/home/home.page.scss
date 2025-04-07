@@ -54,3 +54,42 @@ ion-card {
   overflow-x: auto;
   white-space: nowrap;
 }
+
+/* Custom Action Sheet Styling */
+.custom-action-sheet {
+  .action-sheet-button {
+    color: #007bff !important;
+    
+    ion-icon {
+      color: #007bff !important;
+    }
+  }
+  
+  .action-sheet-title {
+    color: #007bff !important;
+  }
+  
+  .action-sheet-group {
+    .action-sheet-destructive {
+      color: #007bff !important;
+      
+      ion-icon {
+        color: #007bff !important;
+      }
+    }
+  }
+}
+
+/* Direct DOM manipulation for specific elements */
+ion-action-sheet .action-sheet-button-inner {
+  color: #007bff !important;
+}
+
+ion-action-sheet ion-icon {
+  color: #007bff !important;
+}
+
+ion-action-sheet .sc-ion-action-sheet-md,
+ion-action-sheet .sc-ion-action-sheet-ios {
+  color: #007bff !important;
+}

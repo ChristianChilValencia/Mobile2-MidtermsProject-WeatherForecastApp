@@ -1,14 +1,3 @@
-/*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
- */
-
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
@@ -24,14 +13,94 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+@import "@ionic/angular/css/display.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+/* Light mode - Blue action sheet text/icons */
+.action-sheet-button.sc-ion-action-sheet-md,
+.action-sheet-button.sc-ion-action-sheet-ios {
+  color: #007bff !important;
+}
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+.action-sheet-title.sc-ion-action-sheet-md,
+.action-sheet-title.sc-ion-action-sheet-ios {
+  color: #007bff !important;
+}
+
+.action-sheet-icon.sc-ion-action-sheet-md,
+.action-sheet-icon.sc-ion-action-sheet-ios {
+  color: #007bff !important;
+}
+
+/* Dark mode - White action sheet text/icons */
+body.dark .action-sheet-button.sc-ion-action-sheet-md,
+body.dark .action-sheet-button.sc-ion-action-sheet-ios {
+  color: #ffffff !important;
+}
+
+body.dark .action-sheet-title.sc-ion-action-sheet-md,
+body.dark .action-sheet-title.sc-ion-action-sheet-ios {
+  color: #ffffff !important;
+}
+
+body.dark .action-sheet-icon.sc-ion-action-sheet-md,
+body.dark .action-sheet-icon.sc-ion-action-sheet-ios {
+  color: #ffffff !important;
+}
+
+/* Direct DOM targeting */
+html body ion-action-sheet .action-sheet-button {
+  color: #007bff !important;
+}
+
+html body ion-action-sheet ion-icon {
+  color: #007bff !important;
+}
+
+/* Dark mode overrides with higher specificity */
+html body.dark ion-action-sheet .action-sheet-button {
+  color: #ffffff !important;
+}
+
+html body.dark ion-action-sheet ion-icon {
+  color: #ffffff !important;
+}
+
+/* Dark mode - Make all icons white */
+body.dark ion-icon {
+  color: #ffffff !important;
+}
+
+/* Dark mode - All button text white */
+body.dark ion-button {
+  --color: #ffffff !important;
+}
+
+/* Dark mode - All text in buttons should be white */
+body.dark ion-button span, 
+body.dark ion-button ion-icon {
+  color: #ffffff !important;
+}
+
+/* Dark mode - Ensure clear buttons have white text and icons */
+body.dark ion-button[fill="clear"],
+body.dark ion-button[fill="clear"] ion-icon {
+  color: #ffffff !important;
+}
+
+/* Dark mode - Ensure all footer buttons have white text */
+body.dark ion-footer ion-button,
+body.dark ion-footer ion-icon {
+  color: #ffffff !important;
+}
+
+/* Dark mode - Ensure header buttons have white text */
+body.dark ion-header ion-button,
+body.dark ion-header ion-icon {
+  color: #ffffff !important;
+}
+
+/* If any buttons in cards need special handling */
+body.dark ion-card ion-button,
+body.dark ion-card ion-icon {
+  color: #ffffff !important;
+}

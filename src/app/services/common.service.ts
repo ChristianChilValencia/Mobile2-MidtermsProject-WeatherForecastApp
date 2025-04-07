@@ -12,7 +12,7 @@ const API_URL = environment.API_URL;
   providedIn: 'root'
 })
 export class CommonService {
-  // RENDERING PARA THEMES
+  // RENDERING PARA THEMES SA CSS
   renderer: Renderer2;
   constructor(
     private http: HttpClient, 
@@ -34,6 +34,7 @@ export class CommonService {
     }
   }
 
+  // TUNG MESSAGE MO GAWAS NA GAMAY KUNG WAY NETWORK SAYUP GI BUTANG NA CITY
   async presentToast(message: string) {
     const toast = document.createElement('ion-toast');
     toast.message = message;
@@ -42,24 +43,27 @@ export class CommonService {
     await toast.present();
   }
 
-  // PA DARK OG LIGHT MODE
-  enableDark() {
-    this.renderer.addClass(this.document.body, 'dark');
-    Preferences.set({ key: 'theme', value: 'dark' }); 
+  // PAND DARK OG LIGHT THEME
+  async enableDark() {
+  document.body.classList.add('dark');
+  await Preferences.set({ key: 'theme', value: 'dark' });
+  console.log('Dark theme enabled');
   }
 
-  enableLight() {
-    this.renderer.removeClass(this.document.body, 'dark');
-    Preferences.set({ key: 'theme', value: 'light' });
+  async enableLight() {
+    document.body.classList.remove('dark');
+    await Preferences.set({ key: 'theme', value: 'light' });
+    console.log('Light theme enabled');
   }
 
-  //APPLYUN ANG THEME
   async applySavedTheme() {
     const theme = await Preferences.get({ key: 'theme' });
     if (theme.value === 'dark') {
-      this.enableDark();
+      document.body.classList.add('dark');
+      console.log('Applied saved dark theme');
     } else {
-      this.enableLight();
+      document.body.classList.remove('dark');
+      console.log('Applied saved light theme');
     }
   }
 
