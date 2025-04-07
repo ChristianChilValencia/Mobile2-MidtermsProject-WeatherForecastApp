@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { CommonService } from '../services/common.service';
 import { ActionSheetController } from '@ionic/angular';
 import { Preferences } from '@capacitor/preferences';
-import { Geolocation } from '@capacitor/geolocation';
 import { Network } from '@capacitor/network';
 const API_KEY = environment.API_KEY;
 const API_URL = environment.API_URL;
@@ -60,27 +59,57 @@ export class HomePage implements OnInit {
   async loadCachedData() {
     console.log('Loading cached data due to offline status');
     
-    const cachedWeather = await Preferences.get({ key: 'currentWeather' });
-    if (cachedWeather.value) {
-      const weatherData = JSON.parse(cachedWeather.value);
+    const loadFromCache = async (key: string, processor?: Function) => {
+      const cached = await Preferences.get({ key });
+      if (cached.value) {
+        const data = JSON.parse(cached.value);
+        console.log(`Loaded cached ${key} data`);
+        return processor ? processor(data) : data;
+      }
+      return null;
+    };
+    
+    const weatherData = await loadFromCache('currentWeather');
+    if (weatherData) {
       this.weatherTemp = this.processWeatherData(weatherData);
       this.weatherDetails = weatherData.weather[0];
       this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@2x.png`;
-      console.log('Loaded cached weather data');
     }
     
-    const cachedForecast = await Preferences.get({ key: 'dailyForecast' });
-    if (cachedForecast.value) {
-      const forecastData = JSON.parse(cachedForecast.value);
+    const forecastData = await loadFromCache('dailyForecast');
+    if (forecastData) {
       this.forecastData = this.processForecastData(forecastData.list);
-      console.log('Loaded cached forecast data');
     }
     
-    const cachedHourly = await Preferences.get({ key: 'hourlyForecast' });
-    if (cachedHourly.value) {
-      this.hourlyForecastData = JSON.parse(cachedHourly.value);
-      console.log('Loaded cached hourly forecast data');
+    this.hourlyForecastData = await loadFromCache('hourlyForecast') || [];
+  }
+
+  async fetchData(endpoint: string, params: string): Promise<any> {
+    if (!this.isOnline) {
+      console.log(`Offline: Cannot fetch ${endpoint} data`);
+      return null;
     }
+    
+    return new Promise((resolve, reject) => {
+      this.httpClient
+        .get(`${API_URL}/${endpoint}?${params}&appid=${API_KEY}&units=metric`)
+        .subscribe({
+          next: async (results: any) => {
+            console.log(`${endpoint} Data:`, results);
+            await Preferences.set({ key: endpoint === 'weather' ? 'currentWeather' : 
+                                        endpoint === 'forecast' && params.includes('cnt=24') ? 'hourlyForecast' : 'dailyForecast', 
+                                   value: JSON.stringify(results) });
+            resolve(results);
+          },
+          error: (error: any) => {
+            console.error(`Error fetching ${endpoint}:`, error);
+            if (endpoint === 'weather') {
+              this.commonService.presentToast('City not found. Please check the spelling.');
+            }
+            reject(error);
+          },
+        });
+    });
   }
 
   async loadHourlyForecast() {
@@ -89,37 +118,24 @@ export class HomePage implements OnInit {
       return;
     }
     
-    if (!this.isOnline) {
-      console.log('Offline: Cannot fetch hourly forecast data');
-      return;
-    }
-
-    console.log('Fetching hourly forecast for:', this.cityName);
+    const results = await this.fetchData('forecast', `q=${this.cityName}&cnt=24`)
+      .catch(error => console.error('Error fetching hourly forecast:', error));
     
-    this.httpClient
-      .get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}&units=metric&cnt=24`)
-      .subscribe({
-        next: async (results: any) => {
-          console.log('Hourly Forecast Data:', results);
-          
-          this.hourlyForecastData = results.list.slice(0, 8).map((forecast: any) => {
-            return {
-              time: new Date(forecast.dt * 1000),
-              temp: this.convertTemperature(forecast.main.temp),
-              description: forecast.weather[0].description,
-              icon: forecast.weather[0].icon,
-              humidity: forecast.main.humidity,
-              windSpeed: forecast.wind.speed
-            };
-          });
-          
-          await Preferences.set({ key: 'hourlyForecast', value: JSON.stringify(this.hourlyForecastData) });
-          console.log('Processed hourly forecast:', this.hourlyForecastData);
-        },
-        error: (error: any) => {
-          console.error('Error fetching hourly forecast:', error);
-        },
+    if (results) {
+      this.hourlyForecastData = results.list.slice(0, 8).map((forecast: any) => {
+        return {
+          time: new Date(forecast.dt * 1000),
+          temp: this.convertTemperature(forecast.main.temp),
+          description: forecast.weather[0].description,
+          icon: forecast.weather[0].icon,
+          humidity: forecast.main.humidity,
+          windSpeed: forecast.wind.speed
+        };
       });
+      
+      await Preferences.set({ key: 'hourlyForecast', value: JSON.stringify(this.hourlyForecastData) });
+      console.log('Processed hourly forecast:', this.hourlyForecastData);
+    }
   }
 
   async getCurrentWeather() {
@@ -152,79 +168,54 @@ export class HomePage implements OnInit {
       return;
     }
     
-    if (!this.isOnline) {
-      console.log('Offline: Cannot fetch forecast data');
-      return;
+    const results = await this.fetchData('forecast', `q=${this.cityName}`)
+      .catch(error => console.error('Error fetching forecast:', error));
+    
+    if (results) {
+      this.forecastData = this.processForecastData(results.list);
     }
-
-    this.httpClient
-      .get(`${API_URL}/forecast?q=${this.cityName}&appid=${API_KEY}&units=metric`)
-      .subscribe({
-        next: async (results: any) => {
-          console.log('Forecast Data:', results);
-          await Preferences.set({ key: 'dailyForecast', value: JSON.stringify(results) });
-          this.forecastData = this.processForecastData(results.list);
-        },
-        error: (error: any) => console.error('Error fetching current forecast:', error),
-      });
   }
   
   async loadData(): Promise<void> {
     if (!this.cityName) {
       console.error('No city name available to load data!');
-      return Promise.resolve();
+      return;
     }
     
     await Preferences.set({ key: 'cityName', value: this.cityName });
     
-    if (!this.isOnline) {
-      console.log('Offline: Cannot fetch current weather data');
-      return Promise.resolve();
-    }
+    const results = await this.fetchData('weather', `q=${this.cityName}`)
+      .catch(error => {
+        console.error('Error fetching weather data:', error);
+        return null;
+      });
     
-    return new Promise<void>((resolve, reject) => {
-      this.httpClient
-        .get(`${API_URL}/weather?q=${this.cityName}&appid=${API_KEY}&units=metric`)
-        .subscribe({
-          next: async (results: any) => {
-            console.log(results);
-            await Preferences.set({ key: 'currentWeather', value: JSON.stringify(results) });
-            this.weatherTemp = this.processWeatherData(results);
-            this.weatherDetails = results.weather[0];
-            this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@2x.png`;
-            console.log('Weather Icon URL:', this.weatherIcon);
-            await this.saveDataToPreferences();
-            resolve();
-          },
-          error: (error: any) => {
-            console.error('Error fetching current data:', error);
-            this.commonService.presentToast('City not found. Please check the spelling.');
-            reject(error);
-          },
-        });
-    });
+    if (results) {
+      this.weatherTemp = this.processWeatherData(results);
+      this.weatherDetails = results.weather[0];
+      this.weatherIcon = `https://openweathermap.org/img/wn/${this.weatherDetails.icon}@2x.png`;
+      console.log('Weather Icon URL:', this.weatherIcon);
+      await this.saveDataToPreferences();
+    }
   }
 
   private async loadDataAndForecast(): Promise<void> {
     await this.checkNetworkStatus();
     
-    return new Promise<void>(async (resolve) => {
-      if (this.isOnline) {
-        try {
-          await this.loadData();
-          this.loadForecast();
-          this.loadHourlyForecast();
-          resolve();
-        } catch (error) {
-          console.error('Error loading data:', error);
-          resolve();
-        }
-      } else {
-        await this.loadCachedData();
-        this.commonService.presentToast('You are offline. Showing cached data.');
-        resolve();
+    if (this.isOnline) {
+      try {
+        await this.loadData();
+        await Promise.all([
+          this.loadForecast(),
+          this.loadHourlyForecast()
+        ]);
+      } catch (error) {
+        console.error('Error loading data:', error);
       }
-    });
+    } else {
+      await this.loadCachedData();
+      this.commonService.presentToast('You are offline. Showing cached data.');
+    }
   }
   
   // PROCESS FORECAST
@@ -265,19 +256,18 @@ export class HomePage implements OnInit {
 
   // MO CHECK WEATHER ALERTS
   async checkForSevereWeatherAlerts() {
-    if (!(await this.commonService.areNotificationsEnabled())) {
-      console.log('Notifications are disabled. Skipping severe weather alerts.');
+    if (!(await this.commonService.areNotificationsEnabled()) || !this.isOnline) {
+      console.log('Notifications are disabled or offline. Skipping severe weather alerts.');
       return;
     }
-    this.httpClient
-      .get(`${API_URL}/alerts?q=${this.cityName}&appid=${API_KEY}`)
-      .subscribe({
-        next: (alerts: any) => {
-          if (alerts?.length > 0) this.commonService.showNotification();
-          else console.log('No severe weather alerts.');
-        },
-        error: (err) => console.error('Error fetching severe weather alerts:', err),
-      });
+    
+    try {
+      const alerts: any = await this.fetchData('alerts', `q=${this.cityName}`);
+      if (alerts?.length > 0) this.commonService.showNotification();
+      else console.log('No severe weather alerts.');
+    } catch (err) {
+      console.error('Error fetching severe weather alerts:', err);
+    }
   }
 
   // PANG PREFERENCES NA MO SAVE TANAN
@@ -367,4 +357,30 @@ export class HomePage implements OnInit {
       }
     });
   }
+
+  get safeDisplayName(): string {
+    return this.displayedCityName || this.cityName || '';
+  }
+  async exitApp() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Are you sure you want to exit?',
+      buttons: [
+        {
+          text: 'Yes, Exit',
+          role: 'destructive',
+          icon: 'exit-outline',
+          handler: () => {
+            window.close();
+          },
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          icon: 'close-outline',
+        },
+      ],
+    });
+    await actionSheet.present();
+  }
+
 }

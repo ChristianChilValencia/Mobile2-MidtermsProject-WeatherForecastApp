@@ -1,6 +1,9 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>🌥️ WeatherForecastApp</ion-title>
+    <ion-button slot="end" (click)="exitApp()" fill="clear">
+      <ion-icon name="exit-outline"></ion-icon>
+    </ion-button> 
   </ion-toolbar>
 </ion-header>
 
@@ -16,8 +19,7 @@
       <img [src]="weatherIcon" alt="Weather Icon" style="width: 170px; height: 170px;" />
       <ion-card-title>{{ weatherDetails?.description }}</ion-card-title>
       <ion-card-title>{{ todayDate | date: "EEE dd MMM" }}</ion-card-title>
-      <ion-card-title>{{ cityName }}</ion-card-title>
-    </ion-card-content>
+      <ion-card-title>{{ safeDisplayName.length > 1 ? safeDisplayName : 'N/A' }}</ion-card-title>    </ion-card-content>
   </div>
 
   <ion-grid>
