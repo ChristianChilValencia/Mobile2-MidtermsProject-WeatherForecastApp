@@ -1,12 +1,5 @@
-Here’s a cleaner, Markdown-formatted version of your Weather Forecast App documentation for your GitHub README:
-
----
-
 # 🌦️ Weather Forecast App
-
 A mobile application built with **Ionic + Angular** that provides real-time weather and forecasts using the **OpenWeatherMap API**.
-
----
 
 ## 📱 Features
 
@@ -90,6 +83,7 @@ ionic serve
 ```
 
 ### Build for Mobile
+```bash
 # Add platforms
 ionic cap add android
 ionic cap add ios
@@ -101,3 +95,4 @@ ionic cap sync
 # Open in IDE
 ionic cap open android
 ionic cap open ios
+```
