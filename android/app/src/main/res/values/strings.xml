@@ -1,7 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+<<<<<<< HEAD
     <string name="app_name">weatherApp</string>
     <string name="title_activity_main">weatherApp</string>
+=======
+    <string name="app_name">WeatherForecastApp</string>
+    <string name="title_activity_main">WeatherForecastApp</string>
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
     <string name="package_name">io.ionic.starter</string>
     <string name="custom_url_scheme">io.ionic.starter</string>
 </resources>

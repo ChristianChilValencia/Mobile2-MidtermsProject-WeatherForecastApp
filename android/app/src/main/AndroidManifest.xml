@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+<<<<<<< HEAD
     <!-- Permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+=======
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -40,4 +43,10 @@
         </provider>
     </application>
 
+<<<<<<< HEAD
+=======
+    <!-- Permissions -->
+
+    <uses-permission android:name="android.permission.INTERNET" />
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
 </manifest>

@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "name": "weatherApp",
+=======
+  "name": "WeatherForecastApp",
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -21,6 +25,7 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
+<<<<<<< HEAD
     "@capacitor/android": "^7.2.0",
     "@capacitor/app": "7.0.1",
     "@capacitor/core": "^7.2.0",
@@ -30,6 +35,19 @@
     "@capacitor/preferences": "^7.0.1",
     "@capacitor/status-bar": "7.0.1",
     "@ionic/angular": "^8.0.0",
+=======
+    "@capacitor/android": "^7.1.0",
+    "@capacitor/app": "7.0.0",
+    "@capacitor/core": "7.1.0",
+    "@capacitor/geolocation": "^7.1.1",
+    "@capacitor/haptics": "7.0.0",
+    "@capacitor/keyboard": "7.0.0",
+    "@capacitor/preferences": "^7.0.0",
+    "@capacitor/status-bar": "7.0.0",
+    "@capacitor/storage": "^1.2.5",
+    "@ionic/angular": "^8.0.0",
+    "axios": "^1.8.4",
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
     "ionicons": "^7.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -45,9 +63,14 @@
     "@angular/cli": "^19.0.0",
     "@angular/compiler-cli": "^19.0.0",
     "@angular/language-service": "^19.0.0",
+<<<<<<< HEAD
     "@capacitor/cli": "^7.2.0",
     "@ionic/angular-toolkit": "^12.0.0",
     "@types/axios": "^0.9.36",
+=======
+    "@capacitor/cli": "7.1.0",
+    "@ionic/angular-toolkit": "^12.0.0",
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
     "@types/jasmine": "~5.1.0",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.0",

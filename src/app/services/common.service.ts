@@ -1,6 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
+<<<<<<< HEAD
 import { environment } from '../../environments/environment';
+=======
+import { environment } from 'src/environments/environment';
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
 import { Geolocation } from '@capacitor/geolocation';
 import { DOCUMENT } from '@angular/common';
 import { Preferences } from '@capacitor/preferences';

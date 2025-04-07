@@ -24,6 +24,10 @@ android {
     }
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
 repositories {
     flatDir{
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'

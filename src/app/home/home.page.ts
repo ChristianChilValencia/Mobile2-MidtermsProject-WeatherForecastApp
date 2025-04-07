@@ -1,10 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+<<<<<<< HEAD
 import { environment } from '../../environments/environment';
+=======
+import { environment } from 'src/environments/environment';
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
 import { HttpClient } from '@angular/common/http';
 import { CommonService } from '../services/common.service';
 import { ActionSheetController } from '@ionic/angular';
 import { Preferences } from '@capacitor/preferences';
+<<<<<<< HEAD
 import { Geolocation } from '@capacitor/geolocation';
+=======
+
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
 const API_KEY = environment.API_KEY;
 const API_URL = environment.API_URL;
 
@@ -21,7 +29,10 @@ export class HomePage implements OnInit {
   weatherDetails: any;
   cityName: string = '';
   location: any = {};
+<<<<<<< HEAD
   hourlyForecastData: any[] = [];
+=======
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
   forecastData: any[] = [];
   temperatureUnit: 'C' | 'F' = 'C';
   backgroundImage = 'assets/kuyakim.jpg';
@@ -40,6 +51,7 @@ export class HomePage implements OnInit {
     this.cityName ? this.loadDataAndForecast() : this.getCurrentWeather();
   }
 
+<<<<<<< HEAD
 
 
 
@@ -90,6 +102,8 @@ async loadHourlyForecast() {
     });
 }
 
+=======
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
   // KUHA SA IMUNG CURRENT WEATHER 
   async getCurrentWeather() {
     console.log('Fetching current location...');
@@ -108,6 +122,7 @@ async loadHourlyForecast() {
     });
   }
 
+<<<<<<< HEAD
 
 
 
@@ -117,6 +132,8 @@ async loadHourlyForecast() {
 
 
   
+=======
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
   // MAU NAG 5 DAY FORECAST
   async loadForecast() {
     if (!this.cityName) {
@@ -163,7 +180,10 @@ async loadHourlyForecast() {
   private loadDataAndForecast() {
     this.loadData();
     this.loadForecast();
+<<<<<<< HEAD
     this.loadHourlyForecast(); // Add this line
+=======
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
   }
   
   // PROCESS FORECAST

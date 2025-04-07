@@ -1,17 +1,28 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+<<<<<<< HEAD
     
+=======
+    ext.kotlin_version = '1.8.22'
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
+<<<<<<< HEAD
         classpath 'com.android.tools.build:gradle:8.7.2'
         classpath 'com.google.gms:google-services:4.4.2'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+=======
+        classpath 'com.android.tools.build:gradle:8.7.3'
+        classpath 'com.google.gms:google-services:4.4.2'
+        classpath "com.android.tools.build:gradle:8.0.2"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
     }
 }
 
@@ -22,8 +33,20 @@ allprojects {
         google()
         mavenCentral()
     }
+<<<<<<< HEAD
 }
 
+=======
+    configurations.all {
+        resolutionStrategy {
+            force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+            force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+        }
+    }
+}
+
+
+>>>>>>> 45d9c574b2b82df770ec3ca0505d9215141173bb
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
