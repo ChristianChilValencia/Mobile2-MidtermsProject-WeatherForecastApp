@@ -1,2 +1,54 @@
-// For information on how to create your own theme, please see:
-// http://ionicframework.com/docs/theming/
+/** Ionic Variables and Theming. For more info, please see:
+ * http://ionicframework.com/docs/theming/
+ **/
+
+/** Light Mode Variables **/:root {
+  --ion-color-primary: #428cff; /* Primary color */
+  --ion-color-secondary: #50c8ff; /* Secondary color */
+  --ion-color-tertiary: #6a64ff; /* Tertiary color */
+  --ion-color-success: #2fdf75; /* Success color */
+  --ion-color-warning: #ffd534; /* Warning color */
+  --ion-color-danger: #ff4961; /* Danger color */
+  --ion-color-dark: #222428; /* Dark text color */
+  --ion-color-medium: #989aa2; /* Medium text color */
+  --ion-color-light: #f4f5f8; /* Light background color */
+
+  --ion-background-color: #ffffff; /* Background color */
+  --ion-text-color: #000000; /* Pure black text color for better visibility */
+  --ion-toolbar-background: #f8f8f8; /* Toolbar background */
+  --ion-tab-bar-background: #f8f8f8; /* Tab bar background */
+  --ion-card-background: #ffffff; /* Card background */
+  --ion-item-background: #ffffff; /* Item background */
+  
+  --ion-action-sheet-background: #222428; /* Dark background for Action Sheet */
+  --ion-action-sheet-color: #ffffff; /* White text color for Action Sheet */
+  --ion-action-sheet-icon-color: #ffffff; /* White icon color for Action Sheet*/
+
+
+}
+
+/** Dark Mode Variables **/
+body.dark {
+  
+  --ion-color-primary: #3880ff; /* Primary color */
+  --ion-color-secondary: #3dc2ff; /* Secondary color */
+  --ion-color-tertiary: #5260ff; /* Tertiary color */
+  --ion-color-success: #2dd36f; /* Success color */
+  --ion-color-warning: #ffc409; /* Warning color */
+  --ion-color-danger: #eb445a; /* Danger color */
+  --ion-color-dark: #222428; /* Dark text color */
+  --ion-color-medium: #92949c; /* Medium text color */
+  --ion-color-light: #f4f5f8; /* Light background color */
+
+  --ion-background-color: #ffffff; /* Background color */
+  --ion-text-color: #000000; /* Text color */
+
+  --ion-toolbar-background: #f8f8f8; /* Toolbar background */
+  --ion-tab-bar-background: #f8f8f8; /* Tab bar background */
+  --ion-card-background: #ffffff; /* Card background */
+  --ion-item-background: #ffffff; /* Item background */
+
+  --ion-action-sheet-background: #ffffff; /* White background for Action Sheet */
+  --ion-action-sheet-color: #000000; /* Black text color for Action Sheet */
+  --ion-action-sheet-icon-color: #000000; /* Black icon color for Action Sheet */
+  }
