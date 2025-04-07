@@ -67,12 +67,11 @@ A mobile application built with **Ionic + Angular** that provides real-time weat
 - Node.js + npm
 - Ionic CLI: `npm install -g @ionic/cli`
 - Android Studio (Android builds)
-- Xcode (iOS builds on macOS)
 
 ### Installation
 ```bash
 # Clone the repo
-git clone [repository-url]
+git clone https://github.com/ChristianChilValencia/Mobile2-MidtermsProject-WeatherForecastApp.git
 cd weatherApp
 
 # Install dependencies
