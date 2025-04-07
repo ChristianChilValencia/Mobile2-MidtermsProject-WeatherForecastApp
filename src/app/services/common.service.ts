@@ -4,7 +4,7 @@ import { environment } from '../../environments/environment';
 import { Geolocation } from '@capacitor/geolocation';
 import { DOCUMENT } from '@angular/common';
 import { Preferences } from '@capacitor/preferences';
-
+import { LoadingController } from '@ionic/angular';
 const API_KEY = environment.API_KEY;
 const API_URL = environment.API_URL;
 
@@ -17,7 +17,8 @@ export class CommonService {
   constructor(
     private http: HttpClient, 
     private rendererFactory: RendererFactory2,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
+    private loadingController: LoadingController
   ) {
     this.renderer = this.rendererFactory.createRenderer(this.document, null);
   }
@@ -25,14 +26,35 @@ export class CommonService {
   // KUHAG LOCATION 
   async getLocation() {
     try {
-      const position = await Geolocation.getCurrentPosition();
-      const { latitude, longitude } = position.coords;
-      return this.http.get(`http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`);
-    } catch (error) {
-      console.error('Error getting location:', error);
-      throw error;
+      const permissionStatus = await Geolocation.checkPermissions();
+      console.log('Location permission status:', permissionStatus.location);
+    
+      if (permissionStatus.location !== 'granted') {
+        console.log('Requesting location permissions...');
+        const requestResult = await Geolocation.requestPermissions();
+        console.log('Permission request result:', requestResult.location);
+
+      if (requestResult.location !== 'granted') {
+        throw new Error('Location permission denied');
     }
   }
+    
+    const position = await Geolocation.getCurrentPosition({
+      enableHighAccuracy: false,
+      timeout: 15000,
+      maximumAge: 10000
+    });
+    
+    const { latitude, longitude } = position.coords;
+    console.log(`Location obtained: [${latitude}, ${longitude}]`);
+    
+    // Use HTTPS for API calls from mobile
+    return this.http.get(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`);
+  } catch (error) {
+    console.error('Error getting location:', error);
+    throw error;
+  }
+}
 
   // TUNG MESSAGE MO GAWAS NA GAMAY KUNG WAY NETWORK SAYUP GI BUTANG NA CITY
   async presentToast(message: string) {
@@ -56,6 +78,7 @@ export class CommonService {
     console.log('Light theme enabled');
   }
 
+  //ANG MO APPLY SA THEME
   async applySavedTheme() {
     const theme = await Preferences.get({ key: 'theme' });
     if (theme.value === 'dark') {
@@ -97,6 +120,26 @@ export class CommonService {
       };
     } else {
       console.log('Notifications are disabled.');
+    }
+  }
+
+  
+  // PANG LOADING
+  async presentLoading(message: string = 'Please wait...') {
+    const loading = await this.loadingController.create({
+      message: message,
+      duration: 30000,
+    });
+    await loading.present();
+    return loading;
+  }
+  
+  // DISMISS SA LOADING
+  async dismissLoading() {
+    try {
+      return await this.loadingController.dismiss();
+    } catch (error) {
+      return null;
     }
   }
 }

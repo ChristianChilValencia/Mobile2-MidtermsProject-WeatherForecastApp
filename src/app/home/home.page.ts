@@ -153,21 +153,64 @@ export class HomePage implements OnInit {
       return this.loadCachedData();
     }
     
-    console.log('Fetching current location...');
-    (await this.commonService.getLocation()).subscribe({
-      next: (response: any) => {
-        if (response?.[0]?.name) {
-          this.cityName = response[0].name;
-          this.location.city = response[0].name;
-          console.log('Detected City:', this.cityName);
-          this.loadDataAndForecast().then(() => {
-            this.displayedCityName = this.cityName;
-          });
-        } else {
-          console.error('City name not found in reverse geocoding response.');
-        }
-      },
-      error: (error: any) => console.error('Error fetching current weather:', error),
+    const loader = await this.commonService.presentLoading('Detecting your location...');
+    
+    try {
+      console.log('Fetching current location...');
+      const locationObservable = await this.commonService.getLocation();
+      
+      const locationPromise = new Promise((resolve) => {
+        const subscription = locationObservable.subscribe({
+          next: (response: any) => {
+            console.log('Location response:', response);
+            if (response && response.length > 0 && response[0]?.name) {
+              this.cityName = response[0].name;
+              this.location.city = response[0].name;
+              console.log('Detected City:', this.cityName);
+              resolve(true);
+            } else {
+              console.error('City name not found in response.');
+              resolve(false);
+            }
+            subscription.unsubscribe();
+          },
+          error: (error: any) => {
+            console.error('Location error:', error);
+            resolve(false);
+            subscription.unsubscribe(); 
+          }
+        });
+      });
+      
+      const success = await locationPromise;
+      await this.commonService.dismissLoading();
+      
+      if (success) {
+        await this.loadDataAndForecast();
+        this.displayedCityName = this.cityName;
+      } else {
+        this.handleLocationFailure();
+      }
+    } catch (error) {
+      console.error('Failed to get location:', error);
+      await this.commonService.dismissLoading();
+      this.handleLocationFailure();
+    }
+  }
+  
+  private async handleLocationFailure() {
+    this.commonService.presentToast('Could not detect your location. Using fallback location.');
+    
+    const savedCity = await Preferences.get({ key: 'cityName' });
+    if (savedCity && savedCity.value) {
+      this.cityName = savedCity.value;
+    } else {
+      this.cityName = '';
+      await Preferences.set({ key: 'cityName', value: this.cityName });
+    }
+    
+    this.loadDataAndForecast().then(() => {
+      this.displayedCityName = this.cityName;
     });
   }
 
@@ -213,6 +256,7 @@ export class HomePage implements OnInit {
   }
 
 
+  // PANG LOAD SA TANAN DATA OG FORECAST
   private async loadDataAndForecast(): Promise<void> {
     await this.checkNetworkStatus();
     
@@ -253,11 +297,9 @@ export class HomePage implements OnInit {
 
   // SA CITY NAME RANI PARA DI MA WA 
   async onCityNameChange() {
-    // Don't restore the previous value when clearing - only save non-empty values
     if (this.cityName.trim()) {
       await Preferences.set({ key: 'cityName', value: this.cityName });
     }
-    // Remove automatic data loading here to prevent dynamic updates
   }
 
 
@@ -390,7 +432,7 @@ export class HomePage implements OnInit {
   }
   
 
-  // FINALLY MO EXIT SA APP
+  // FINALLY ANG MO EXIT SA APP
   async exitApp() {
     const actionSheet = await this.actionSheetCtrl.create({
       header: 'Are you sure you want to exit?',
